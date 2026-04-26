@@ -133,6 +133,25 @@
           </div>
         </div>
         
+        <div class="section">
+          <h3 class="section-title">已选择的地点</h3>
+          <div v-if="locationStore.locations.length > 0" class="locations-list">
+            <div 
+              v-for="(location, index) in locationStore.locations" 
+              :key="location.id" 
+              class="location-item"
+            >
+              <div class="location-index">{{ index + 1 }}</div>
+              <div class="location-info">
+                <div class="location-name">{{ location.location.name }}</div>
+                <div class="location-address">{{ location.location.address }}</div>
+                <div v-if="location.notes" class="location-notes">{{ location.notes }}</div>
+              </div>
+            </div>
+          </div>
+          <div v-else class="empty-text">暂无选择的地点</div>
+        </div>
+        
         <p class="updated-at">最后更新时间：{{ formatDateTime(store.currentPlan.updated_at) }}</p>
         
         <div class="action-section">
@@ -165,6 +184,7 @@
 import { ref, onMounted, h } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useTravelPlanStore } from '../stores/travelPlan';
+import { useLocationStore } from '../stores/location';
 import { NCard, NButton, NSpin, NEmpty, NTag, NIcon } from 'naive-ui';
 
 // 图标组件
@@ -212,6 +232,7 @@ const DeleteIcon = {
 const router = useRouter();
 const route = useRoute();
 const store = useTravelPlanStore();
+const locationStore = useLocationStore();
 
 const planId = route.params.id;
 
@@ -270,9 +291,10 @@ const handleDelete = async () => {
   }
 };
 
-// 加载规划详情
+// 加载规划详情和地点
 onMounted(async () => {
   await store.fetchPlan(planId);
+  await locationStore.fetchPlanLocations(planId);
 });
 </script>
 
@@ -462,6 +484,72 @@ onMounted(async () => {
   box-shadow: var(--shadow-card);
 }
 
+.locations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.location-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+  transition: var(--transition-normal);
+  border: 1px solid transparent;
+  animation: infoItemAppear 0.3s ease-out;
+}
+
+.location-item:hover {
+  background-color: #ECEAE8;
+  border-color: var(--color-border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.location-index {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.location-info {
+  flex: 1;
+}
+
+.location-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+
+.location-address {
+  font-size: 14px;
+  color: var(--color-text-light);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.location-notes {
+  font-size: 14px;
+  color: var(--color-text);
+  font-style: italic;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+  line-height: 1.5;
+}
+
 .updated-at {
   margin: 6px 0 0;
   font-size: 13px;
@@ -532,4 +620,15 @@ onMounted(async () => {
 .info-item:nth-child(4) { animation-delay: 0.4s; }
 .info-item:nth-child(5) { animation-delay: 0.5s; }
 .info-item:nth-child(6) { animation-delay: 0.6s; }
+
+.location-item:nth-child(1) { animation-delay: 0.1s; }
+.location-item:nth-child(2) { animation-delay: 0.2s; }
+.location-item:nth-child(3) { animation-delay: 0.3s; }
+.location-item:nth-child(4) { animation-delay: 0.4s; }
+.location-item:nth-child(5) { animation-delay: 0.5s; }
+.location-item:nth-child(6) { animation-delay: 0.6s; }
+.location-item:nth-child(7) { animation-delay: 0.7s; }
+.location-item:nth-child(8) { animation-delay: 0.8s; }
+.location-item:nth-child(9) { animation-delay: 0.9s; }
+.location-item:nth-child(10) { animation-delay: 1.0s; }
 </style>

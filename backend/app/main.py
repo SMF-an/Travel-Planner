@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import travel_plan
+from app.routes import travel_plan, location
 
 app = FastAPI(
     title="Travel Planner API",
@@ -8,17 +8,16 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 配置CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 在生产环境中应该设置具体的前端域名
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 注册路由
 app.include_router(travel_plan.router, prefix="/api", tags=["travel_plans"])
+app.include_router(location.router, prefix="/api", tags=["locations"])
 
 # 根路径
 @app.get("/")

@@ -37,6 +37,14 @@ const routes = [
     meta: {
       title: '规划详情'
     }
+  },
+  {
+    path: '/plans/:id/locations',
+    name: 'PlanLocations',
+    component: () => import('../views/PlanForm.vue'),
+    meta: {
+      title: '选择地点'
+    }
   }
 ];
 
@@ -45,7 +53,6 @@ const router = createRouter({
   routes
 });
 
-// 设置页面标题
 router.beforeEach((to, from) => {
   document.title = to.meta.title || '智能出行规划器';
   return true;

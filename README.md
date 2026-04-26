@@ -2,32 +2,32 @@
 
 **项目名称**：智能出行规划器（Travel Planner）
 **项目类型**：前后端分离全栈应用
-**文档版本**：V1.0
+**文档版本**：V2.0
 **编写日期**：2026年4月26日
-**项目状态**：第一阶段开发完成
+**项目状态**：第二阶段开发完成
 
 ---
 
 ## 目录
 
-1. [项目背景](#1-项目背景)
+1. [项目概述](#1-项目概述)
 2. [项目目标](#2-项目目标)
-3. [主要工作内容](#3-主要工作内容)
-4. [已完成任务清单](#4-已完成任务清单)
-5. [关键技术实现](#5-关键技术实现)
-6. [遇到的问题及解决方案](#6-遇到的问题及解决方案)
-7. [项目进度与时间线](#7-项目进度与时间线)
-8. [当前项目状态](#8-当前项目状态)
-9. [未完成工作及后续计划](#9-未完成工作及后续计划)
-10. [附录](#10-附录)
+3. [项目结构](#3-项目结构)
+4. [技术架构](#4-技术架构)
+5. [功能模块](#5-功能模块)
+6. [已完成任务清单](#6-已完成任务清单)
+7. [关键技术实现](#7-关键技术实现)
+8. [遇到的问题及解决方案](#8-遇到的问题及解决方案)
+9. [API接口文档](#9-api接口文档)
+10. [项目规范](#10-项目规范)
 
 ---
 
-## 1. 项目背景
+## 1. 项目概述
 
-### 1.1 项目概述
+### 1.1 项目简介
 
-智能出行规划器是一款面向短途出行、一日游或周末出行用户设计的全栈Web应用系统。系统提供从"创建规划"到"查看建议"的全流程服务，旨在帮助用户高效管理出行计划，提升出行体验。
+智能出行规划器是一款面向短途出行、一日游或周末出行用户设计的全栈Web应用系统。系统提供从"创建规划"到"地点选择"的全流程服务，旨在帮助用户高效管理出行计划，提升出行体验。
 
 ### 1.2 项目背景
 
@@ -37,28 +37,58 @@
 - **效率低下**：缺乏统一的规划工具，用户需要在多个应用间切换
 - **体验割裂**：现有工具缺乏整体性，用户难以形成完整的出行方案
 
-基于以上痛点，我们设计并开发了智能出行规划器系统，旨在为用户提供一站式的出行规划解决方案。
+### 1.3 开发阶段
 
-### 1.3 技术架构
+| 阶段 | 名称 | 状态 | 主要内容 |
+|------|------|------|----------|
+| 第一阶段 | 规划管理 | ✅ 已完成 | 规划CRUD、地点管理 |
+| 第二阶段 | 地点选择 | ✅ 已完成 | 地图交互、地点搜索、拖拽排序 |
 
-本项目采用业界主流的**前后端分离架构**（Frontend-Backend Separation Architecture），并使用**Monorepo**（单仓库多模块）模式进行项目管理。
+---
 
-**技术栈概览**：
+## 2. 项目目标
 
-| 层级 | 技术选型 | 版本 | 说明 |
-|------|----------|------|------|
-| 前端框架 | Vue 3 | 3.x | 采用Composition API |
-| 构建工具 | Vite | 8.x | 快速热更新的开发体验 |
-| UI组件库 | Naive UI | 2.x | 现代化Vue3组件库 |
-| 状态管理 | Pinia | 2.x | Vue3推荐的状态管理方案 |
-| 路由管理 | Vue Router | 4.x | Vue3官方路由解决方案 |
-| HTTP客户端 | Axios | 1.x | 异步请求封装 |
-| 后端框架 | FastAPI | 0.136.x | 高性能Python Web框架 |
-| ORM框架 | Peewee | 3.x | 轻量级Python ORM |
-| 数据验证 | Pydantic | 2.x | 数据模型验证库 |
-| 数据库 | SQLite | 3.x | 轻量级关系型数据库 |
+### 2.1 总体目标
 
-### 1.4 项目结构
+在项目第二阶段，专注于完成**地点选择与管理模块**的完整功能实现，包括地图交互、地点搜索、拖拽排序等功能，建立完善的前后端通信机制。
+
+### 2.2 功能目标
+
+#### 2.2.1 规划管理模块
+
+| 序号 | 功能 | 描述 | 优先级 |
+|------|------|------|--------|
+| F1 | 规划创建 | 用户可创建新的出行规划 | P0 |
+| F2 | 规划列表 | 用户可查看所有已创建的规划 | P0 |
+| F3 | 规划详情 | 用户可查看单个规划的完整信息 | P0 |
+| F4 | 规划编辑 | 用户可编辑已有规划的各项信息 | P0 |
+| F5 | 规划删除 | 用户可删除不需要的规划 | P0 |
+
+#### 2.2.2 地点管理模块
+
+| 序号 | 功能 | 描述 | 优先级 |
+|------|------|------|--------|
+| F6 | 地图选点 | 用户可在地图上点击选择地点 | P0 |
+| F7 | 地点搜索 | 用户可通过关键词搜索地点 | P0 |
+| F8 | 地点列表 | 用户可查看已选地点列表 | P0 |
+| F9 | 地点编辑 | 用户可编辑地点备注信息 | P1 |
+| F10 | 地点删除 | 用户可删除不需要的地点 | P0 |
+| F11 | 拖拽排序 | 用户可通过拖拽调整地点顺序 | P0 |
+| F12 | 地点详情 | 用户可查看地点详细信息 | P1 |
+
+### 2.3 技术目标
+
+| 序号 | 目标 | 描述 | 状态 |
+|------|------|------|------|
+| T1 | 前后端分离 | 前后端通过RESTful API通信 | ✅ |
+| T2 | 数据验证 | 后端使用Pydantic进行数据校验 | ✅ |
+| T3 | 状态管理 | 前端使用Pinia统一管理应用状态 | ✅ |
+| T4 | 地图集成 | 高德地图API集成 | ✅ |
+| T5 | 拖拽功能 | vuedraggable拖拽排序 | ✅ |
+
+---
+
+## 3. 项目结构
 
 ```
 travel_planner/
@@ -71,34 +101,37 @@ travel_planner/
 │   │   ├── main.py                 # FastAPI应用入口
 │   │   ├── models/                 # 数据模型目录
 │   │   │   ├── __init__.py
+│   │   │   ├── location.py        # 地点数据模型
 │   │   │   └── travel_plan.py      # 出行规划数据模型
 │   │   ├── routes/                 # 路由目录
 │   │   │   ├── __init__.py
-│   │   │   └── travel_plan.py      # 规划CRUD路由
+│   │   │   ├── location.py        # 地点相关路由
+│   │   │   └── travel_plan.py      # 规划相关路由
 │   │   ├── schemas/                # 数据模式目录
 │   │   │   ├── __init__.py
-│   │   │   └── travel_plan.py      # Pydantic数据模型
+│   │   │   ├── location.py        # 地点Pydantic模型
+│   │   │   └── travel_plan.py      # 规划Pydantic模型
 │   │   └── utils/                  # 工具函数目录
 │   │       └── __init__.py
-│   ├── travel_planner.db           # SQLite数据库文件
-│   └── venv/                       # Python虚拟环境
+│   └── travel_planner.db           # SQLite数据库文件
 └── frontend/                        # 前端模块
     ├── public/                     # 静态资源目录
     ├── src/                        # 源代码目录
     │   ├── api/                    # API接口封装
-    │   │   └── travelPlan.js       # 规划相关API
+    │   │   ├── location.js        # 地点相关API
+    │   │   └── travelPlan.js      # 规划相关API
     │   ├── assets/                 # 静态资源
-    │   │   └── icons.js            # SVG图标组件
     │   ├── components/             # 公共组件
-    │   │   └── HelloWorld.vue
+    │   │   └── LocationSelector.vue # 地点选择组件
     │   ├── router/                # 路由配置
     │   │   └── index.js
     │   ├── stores/                 # Pinia状态管理
-    │   │   └── travelPlan.js
+    │   │   ├── location.js       # 地点状态管理
+    │   │   └── travelPlan.js      # 规划状态管理
     │   ├── views/                 # 页面视图
-    │   │   ├── PlanDetail.vue      # 规划详情页
-    │   │   ├── PlanForm.vue        # 规划表单页
-    │   │   └── PlanList.vue        # 规划列表页
+    │   │   ├── PlanDetail.vue     # 规划详情页
+    │   │   ├── PlanForm.vue       # 规划表单页
+    │   │   └── PlanList.vue       # 规划列表页
     │   ├── App.vue                 # 根组件
     │   ├── main.js                 # 应用入口
     │   └── style.css               # 全局样式
@@ -109,85 +142,102 @@ travel_planner/
 
 ---
 
-## 2. 项目目标
+## 4. 技术架构
 
-### 2.1 总体目标
+### 4.1 技术栈概览
 
-在项目第一阶段，专注于完成**规划管理模块**的完整CRUD（创建、读取、更新、删除）功能实现，建立稳定的前后端通信机制，为后续功能扩展奠定坚实基础。
+| 层级 | 技术选型 | 版本 | 说明 |
+|------|----------|------|------|
+| 前端框架 | Vue 3 | 3.x | 采用Composition API |
+| 构建工具 | Vite | 8.x | 快速热更新的开发体验 |
+| UI组件库 | Naive UI | 2.x | 现代化Vue3组件库 |
+| 状态管理 | Pinia | 2.x | Vue3推荐的状态管理方案 |
+| 路由管理 | Vue Router | 4.x | Vue3官方路由解决方案 |
+| HTTP客户端 | Axios | 1.x | 异步请求封装 |
+| 拖拽组件 | vuedraggable | 4.x | 基于Sortable.js的拖拽排序 |
+| 后端框架 | FastAPI | 0.136.x | 高性能Python Web框架 |
+| ORM框架 | Peewee | 3.x | 轻量级Python ORM |
+| 数据验证 | Pydantic | 2.x | 数据模型验证库 |
+| 数据库 | SQLite | 3.x | 轻量级关系型数据库 |
+| 地图服务 | 高德地图 | 2.0 | 地图展示、地理编码、地点搜索 |
 
-### 2.2 具体目标
+### 4.2 前端架构
 
-#### 2.2.1 功能目标
+前端采用Vue 3 + Composition API架构，主要特点：
 
-| 序号 | 目标名称 | 目标描述 | 优先级 |
-|------|----------|----------|--------|
-| F1 | 规划创建 | 用户可创建新的出行规划，包含标题、日期、预算等信息 | P0 |
-| F2 | 规划列表 | 用户可查看所有已创建的规划，以卡片形式展示 | P0 |
-| F3 | 规划详情 | 用户可查看单个规划的完整信息 | P0 |
-| F4 | 规划编辑 | 用户可编辑已有规划的各项信息 | P0 |
-| F5 | 规划删除 | 用户可删除不需要的规划 | P0 |
-| F6 | 表单验证 | 前端对用户输入进行实时验证 | P1 |
-| F7 | 草稿保存 | 用户编辑时自动保存草稿至localStorage | P1 |
+- **组件化开发**：模块化组件设计，提高代码复用性
+- **响应式状态管理**：使用Pinia进行状态管理，支持异步操作
+- **TypeScript类型安全**：虽然使用JavaScript，但遵循类型提示规范
+- **统一API层**：封装API调用，统一错误处理
 
-#### 2.2.2 技术目标
+### 4.3 后端架构
 
-| 序号 | 目标名称 | 目标描述 | 优先级 |
-|------|----------|----------|--------|
-| T1 | 前后端分离 | 前后端通过RESTful API通信 | P0 |
-| T2 | 数据验证 | 后端使用Pydantic进行数据校验 | P0 |
-| T3 | 状态管理 | 前端使用Pinia统一管理应用状态 | P1 |
-| T4 | 路由管理 | 使用Vue Router实现页面导航 | P1 |
-| T5 | 响应式设计 | 界面适配不同屏幕尺寸设备 | P2 |
+后端采用FastAPI + Peewee架构，主要特点：
 
-#### 2.2.3 界面目标
-
-| 序号 | 目标名称 | 目标描述 | 优先级 |
-|------|----------|----------|--------|
-| U1 | 现代UI | 采用莫兰迪色系和玻璃态设计 | P1 |
-| U2 | 交互体验 | 流畅的页面过渡和微交互 | P1 |
-| U3 | 视觉层次 | 清晰的排版和对比度 | P1 |
+- **异步API设计**：使用async/await提升性能
+- **Pydantic数据验证**：自动请求和响应验证
+- **分层架构**：路由、模型、模式分离
+- **外部服务集成**：高德地图API集成
 
 ---
 
-## 3. 主要工作内容
+## 5. 功能模块
 
-### 3.1 项目初始化
+### 5.1 规划管理模块
 
-#### 3.1.1 Monorepo架构搭建
+#### 5.1.1 规划列表页 (PlanList.vue)
 
-- 创建项目根目录结构
-- 分离frontend和backend模块
-- 配置模块间依赖关系
-- 设置统一开发规范
+- 展示所有已创建的规划卡片
+- 支持按状态筛选（草稿、进行中、已完成、已归档）
+- 支持标题关键词搜索
+- 卡片展示：标题、目的地、日期、状态、预算范围
+- 快捷操作：编辑、删除
+- 响应式布局，支持移动端访问
 
-#### 3.1.2 前端项目初始化
+#### 5.1.2 规划表单页 (PlanForm.vue)
 
-```bash
-# 创建Vue3项目
-npm create vite@latest frontend -- --template vue
+- 两步式表单设计：
+  - 第一步：填写基本信息（标题、目的地、日期、预算等）
+  - 第二步：选择地点（地图选点、搜索添加）
+- 实时表单验证
+- 草稿自动保存（localStorage）
+- 表单数据持久化
 
-# 安装核心依赖
-npm install vue@3 vue-router@4 pinia axios naive-ui
+#### 5.1.3 规划详情页 (PlanDetail.vue)
 
-# 安装开发依赖
-npm install -D vite @vitejs/plugin-vue
-```
+- 完整展示规划信息
+- 已选地点列表展示（序号、名称、地址、备注）
+- 交互反馈：编辑、删除、返回
 
-#### 3.1.3 后端项目初始化
+### 5.2 地点管理模块
 
-```bash
-# 创建虚拟环境
-python -m venv venv
+#### 5.2.1 地图交互 (LocationSelector.vue)
 
-# 安装核心依赖
-pip install fastapi uvicorn peewee pydantic python-multipart
-```
+- **地图初始化**：高德地图2.0 API加载
+- **点击选点**：点击地图任意位置获取坐标
+- **地理编码**：将点击坐标转换为地址信息
+- **标记管理**：显示/隐藏/更新地图标记
+- **位置跳转**：搜索结果自动定位
 
-### 3.2 后端开发
+#### 5.2.2 地点搜索
 
-#### 3.2.1 数据模型设计
+- **搜索方式**：
+  - 高德地图地理编码API（指定API）
+  - 高德地图地点搜索API
+- **搜索结果展示**：列表形式，包含名称和地址
+- **自动定位**：搜索成功后地图跳转并标记
 
-采用Peewee ORM设计数据模型，主要包含以下字段：
+#### 5.2.3 地点列表管理
+
+- **列表展示**：序号、名称、地址、备注
+- **拖拽排序**：长按拖动调整顺序
+- **编辑功能**：修改地点名称、地址、备注
+- **删除功能**：确认后删除地点
+- **详情查看**：模态框展示地点详情
+
+### 5.3 数据模型
+
+#### 5.3.1 TravelPlan 模型
 
 | 字段名 | 数据类型 | 说明 | 约束 |
 |--------|----------|------|------|
@@ -206,99 +256,36 @@ pip install fastapi uvicorn peewee pydantic python-multipart
 | created_at | DateTimeField | 创建时间 | 自动 |
 | updated_at | DateTimeField | 更新时间 | 自动 |
 
-#### 3.2.2 API接口开发
+#### 5.3.2 Location 模型
 
-遵循RESTful设计规范，实现以下接口：
+| 字段名 | 数据类型 | 说明 | 约束 |
+|--------|----------|------|------|
+| id | AutoField | 主键 | 自增 |
+| name | CharField | 地点名称 | 最大255字符 |
+| address | CharField | 地址 | 最大500字符 |
+| latitude | FloatField | 纬度 | 必填 |
+| longitude | FloatField | 经度 | 必填 |
+| description | CharField | 描述 | 最大500字符 |
+| order_index | IntegerField | 排序索引 | 默认0 |
+| created_at | DateTimeField | 创建时间 | 自动 |
 
-| 方法 | 路径 | 功能 | 状态码 |
-|------|------|------|--------|
-| GET | /api/plans | 获取规划列表 | 200 |
-| GET | /api/plans/{id} | 获取规划详情 | 200/404 |
-| POST | /api/plans | 创建新规划 | 201/422 |
-| PUT | /api/plans/{id} | 更新规划 | 200/404/422 |
-| DELETE | /api/plans/{id} | 删除规划 | 204/404 |
+#### 5.3.3 PlanLocation 模型
 
-#### 3.2.3 数据验证
-
-使用Pydantic实现请求和响应数据验证，定义枚举类型约束状态和偏好。
-
-### 3.3 前端开发
-
-#### 3.3.1 组件开发
-
-| 组件名称 | 文件路径 | 功能说明 |
-|----------|----------|----------|
-| App.vue | src/App.vue | 根组件，包含导航栏和路由视图 |
-| PlanList.vue | src/views/PlanList.vue | 规划列表页，支持搜索和筛选 |
-| PlanForm.vue | src/views/PlanForm.vue | 规划表单页，支持创建和编辑 |
-| PlanDetail.vue | src/views/PlanDetail.vue | 规划详情页，展示完整信息 |
-
-#### 3.3.2 状态管理
-
-使用Pinia定义travelPlan Store，包含以下状态和操作：
-
-- **State**: plans, currentPlan, loading, error
-- **Actions**: fetchPlans, fetchPlan, createPlan, updatePlan, deletePlan
-
-#### 3.3.3 路由配置
-
-| 路径 | 名称 | 组件 | 说明 |
-|------|------|------|------|
-| / | Home | - | 重定向到/plans |
-| /plans | PlanList | PlanList.vue | 规划列表 |
-| /plans/create | PlanCreate | PlanForm.vue | 创建规划 |
-| /plans/:id/edit | PlanEdit | PlanForm.vue | 编辑规划 |
-| /plans/:id | PlanDetail | PlanDetail.vue | 规划详情 |
-
-### 3.4 界面优化
-
-#### 3.4.1 设计系统
-
-建立统一的CSS变量系统：
-
-```css
-:root {
-  --color-primary: #8B9DC3;      /* 莫兰迪灰蓝色 */
-  --color-primary-light: #A8B5CF;
-  --color-primary-dark: #6B7FA3;
-  --color-secondary: #D4A5A5;    /* 莫兰迪灰粉色 */
-  --color-accent: #9FC1A9;       /* 莫兰迪灰绿色 */
-  --color-background: #F5F3F0;   /* 米灰色背景 */
-  --color-surface: #FFFFFF;
-  --color-text: #3D3D3D;
-  --color-text-light: #6B6B6B;
-  --color-border: #E5E2DF;
-  --radius-sm: 16px;
-  --radius-md: 20px;
-  --radius-lg: 24px;
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06), 0 8px 40px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
-  --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.08), 0 20px 60px rgba(0, 0, 0, 0.06);
-  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-```
-
-#### 3.4.2 导航栏优化
-
-- 移除冗余的菜单按钮
-- 实现玻璃态（Glassmorphism）效果
-- 使用`backdrop-filter: blur(20px)`实现背景模糊
-- 标题采用渐变色和响应式字体
-
-#### 3.4.3 卡片组件优化
-
-- 统一使用24px大圆角
-- 多层阴影叠加增强立体感
-- 悬停状态添加位移和阴影过渡动画
-- 卡片入场动画（fade + slide）
+| 字段名 | 数据类型 | 说明 | 约束 |
+|--------|----------|------|------|
+| id | AutoField | 主键 | 自增 |
+| location | ForeignKeyField | 关联地点 | 外键 |
+| plan_id | IntegerField | 规划ID | 必填 |
+| order_index | IntegerField | 排序索引 | 默认0 |
+| visit_date | CharField | 访问日期 | 最大50字符 |
+| notes | CharField | 备注 | 最大500字符 |
+| created_at | DateTimeField | 创建时间 | 自动 |
 
 ---
 
-## 4. 已完成任务清单
+## 6. 已完成任务清单
 
-### 4.1 功能任务
+### 6.1 功能任务
 
 | 任务编号 | 任务名称 | 完成状态 | 完成日期 |
 |----------|----------|----------|----------|
@@ -312,10 +299,17 @@ pip install fastapi uvicorn peewee pydantic python-multipart
 | FT-008 | 规划详情页面开发 | ✅ 已完成 | 2026-04-26 |
 | FT-009 | 表单验证逻辑实现 | ✅ 已完成 | 2026-04-26 |
 | FT-010 | 草稿保存功能实现 | ✅ 已完成 | 2026-04-26 |
-| FT-011 | 规划状态管理优化 | ✅ 已完成 | 2026-04-26 |
-| FT-012 | 页面跳转功能修复 | ✅ 已完成 | 2026-04-26 |
+| FT-011 | 地点数据模型设计 | ✅ 已完成 | 2026-04-26 |
+| FT-012 | 地点API路由开发 | ✅ 已完成 | 2026-04-26 |
+| FT-013 | 地图组件开发 | ✅ 已完成 | 2026-04-26 |
+| FT-014 | 地图点击选点功能 | ✅ 已完成 | 2026-04-26 |
+| FT-015 | 地理编码功能 | ✅ 已完成 | 2026-04-26 |
+| FT-016 | 地点搜索功能 | ✅ 已完成 | 2026-04-26 |
+| FT-017 | 地点拖拽排序 | ✅ 已完成 | 2026-04-26 |
+| FT-018 | 地点详情弹窗 | ✅ 已完成 | 2026-04-26 |
+| FT-019 | 规划详情地点展示 | ✅ 已完成 | 2026-04-26 |
 
-### 4.2 界面优化任务
+### 6.2 界面优化任务
 
 | 任务编号 | 任务名称 | 完成状态 | 完成日期 |
 |----------|----------|----------|----------|
@@ -326,8 +320,9 @@ pip install fastapi uvicorn peewee pydantic python-multipart
 | UT-005 | 排版层次优化 | ✅ 已完成 | 2026-04-26 |
 | UT-006 | 响应式布局适配 | ✅ 已完成 | 2026-04-26 |
 | UT-007 | 页面过渡动画 | ✅ 已完成 | 2026-04-26 |
+| UT-008 | 拖拽视觉反馈 | ✅ 已完成 | 2026-04-26 |
 
-### 4.3 Bug修复任务
+### 6.3 Bug修复任务
 
 | 任务编号 | 问题描述 | 解决方案 | 完成状态 |
 |----------|----------|----------|----------|
@@ -338,590 +333,352 @@ pip install fastapi uvicorn peewee pydantic python-multipart
 | BF-005 | Peewee refresh()方法错误 | 重新查询获取实例 | ✅ 已修复 |
 | BF-006 | 表单验证逻辑错误 | 优化验证规则 | ✅ 已修复 |
 | BF-007 | Vue Router导航警告 | 修改守卫返回方式 | ✅ 已修复 |
+| BF-008 | 地图点击事件无响应 | 修复地理编码API调用和事件监听器注册 | ✅ 已修复 |
+| BF-009 | 地理编码结果字段名错误 | formattedAddress改为formatted_address | ✅ 已修复 |
 
 ---
 
-## 5. 关键技术实现
+## 7. 关键技术实现
 
-### 5.1 前端架构
+### 7.1 前端关键技术
 
-#### 5.1.1 Vue 3 Composition API
-
-本项目全面采用Vue 3的Composition API进行组件开发，通过`<script setup>`语法糖简化组件编写。
-
-**典型组件结构**：
+#### 7.1.1 Vue 3 Composition API
 
 ```vue
-<template>
-  <div class="component">
-    <!-- 模板内容 -->
-  </div>
-</template>
-
 <script setup>
-import { ref, computed, onMounted, h } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useLocationStore } from '../stores/location';
 
-// 组件逻辑
-const router = useRouter();
-const data = ref(null);
+const mapInstance = ref(null);
+const searchResults = ref([]);
+const searchLoading = ref(false);
 
-onMounted(() => {
-  // 初始化逻辑
-});
+const handleSearch = async () => {
+  searchLoading.value = true;
+  try {
+    // 构造请求URL
+    const url = new URL(GEOCODE.API_URL);
+    url.searchParams.append('key', GEOCODE.API_KEY);
+    url.searchParams.append('address', keywords);
+    url.searchParams.append('output', 'json');
+
+    const response = await fetch(url.toString());
+    const data = await response.json();
+
+    if (data.status === '1' && data.count > 0) {
+      // 处理结果
+      mapInstance.value.setCenter([lng, lat], true);
+      mapInstance.value.setZoom(15);
+    }
+  } finally {
+    searchLoading.value = false;
+  }
+};
 </script>
-
-<style scoped>
-/* 组件样式 */
-</style>
 ```
 
-#### 5.1.2 Pinia状态管理
-
-使用Pinia定义规划模块的状态管理：
+#### 7.1.2 Pinia状态管理
 
 ```javascript
 import { defineStore } from 'pinia';
-import { travelPlanApi } from '../api/travelPlan';
 
-export const useTravelPlanStore = defineStore('travelPlan', {
+export const useLocationStore = defineStore('location', {
   state: () => ({
-    plans: [],
-    currentPlan: null,
+    locations: [],
+    currentLocation: null,
+    mapLoaded: false,
     loading: false,
     error: null
   }),
-  
+
   getters: {
-    getAllPlans: (state) => state.plans,
-    getCurrentPlan: (state) => state.currentPlan,
-    isLoading: (state) => state.loading
+    getLocationCount: (state) => state.locations.length,
+    getLocationById: (state) => (id) => state.locations.find(l => l.id === id)
   },
-  
+
   actions: {
-    async fetchPlans() {
+    async fetchPlanLocations(planId) {
       this.loading = true;
       try {
-        const response = await travelPlanApi.getPlans();
-        this.plans = response.data;
+        const response = await locationApi.getPlanLocations(planId);
+        this.locations = response.data;
       } catch (err) {
-        this.error = '获取规划列表失败';
+        this.error = '获取地点列表失败';
       } finally {
         this.loading = false;
       }
     },
-    // ...其他actions
+
+    async addLocation(planId, locationData) {
+      const response = await locationApi.addLocation(planId, locationData);
+      this.locations.push(response.data);
+    },
+
+    setMapLoaded(loaded) {
+      this.mapLoaded = loaded;
+    }
   }
 });
 ```
 
-#### 5.1.3 Axios API封装
+#### 7.1.3 拖拽排序实现
 
-```javascript
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
-export const travelPlanApi = {
-  getPlans: () => api.get('/plans'),
-  getPlan: (id) => api.get(`/plans/${id}`),
-  createPlan: (plan) => api.post('/plans', plan),
-  updatePlan: (id, plan) => api.put(`/plans/${id}`, plan),
-  deletePlan: (id) => api.delete(`/plans/${id}`)
-};
+```vue
+<draggable
+  v-model="localLocations"
+  item-key="id"
+  :animation="200"
+  ghost-class="location-ghost"
+  chosen-class="location-chosen"
+  drag-class="location-drag"
+  @end="handleReorder"
+>
+  <template #item="{ element, index }">
+    <div class="location-item">
+      <div class="drag-indicator">
+        <n-icon :component="DragIcon" size="16" />
+      </div>
+      <div class="location-index">{{ index + 1 }}</div>
+      <!-- 其他内容 -->
+    </div>
+  </template>
+</draggable>
 ```
 
-### 5.2 后端架构
+### 7.2 后端关键技术
 
-#### 5.2.1 FastAPI应用结构
+#### 7.2.1 FastAPI路由设计
 
 ```python
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.routes import travel_plan
+from fastapi import APIRouter, HTTPException
+from app.models.location import Location, PlanLocation
+from app.schemas.location import LocationCreate, PlanLocationResponse
 
-app = FastAPI(
-    title="Travel Planner API",
-    description="智能出行规划器API",
-    version="1.0.0"
-)
+router = APIRouter()
 
-# CORS配置
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@router.get("/plans/{plan_id}/locations", response_model=list[PlanLocationResponse])
+def get_plan_locations(plan_id: int):
+    plan_locations = PlanLocation.select().where(
+        PlanLocation.plan_id == plan_id
+    ).order_by(PlanLocation.order_index)
+    return [to_response(pl) for pl in plan_locations]
 
-# 注册路由
-app.include_router(travel_plan.router, prefix="/api", tags=["travel_plans"])
+@router.post("/plans/{plan_id}/locations", response_model=PlanLocationResponse)
+def add_location_to_plan(plan_id: int, location_data: LocationCreate):
+    location = Location.create(
+        name=location_data.name,
+        address=location_data.address,
+        latitude=location_data.latitude,
+        longitude=location_data.longitude
+    )
+    # 创建关联记录
+    return to_response(plan_location)
+
+@router.put("/plans/{plan_id}/locations/reorder")
+def reorder_locations(plan_id: int, location_ids: list[int]):
+    for index, loc_id in enumerate(location_ids):
+        plan_location = PlanLocation.get(...)
+        plan_location.order_index = index
+        plan_location.save()
+    return {"message": "排序更新成功"}
 ```
 
-#### 5.2.2 Peewee数据模型
+#### 7.2.2 外部API集成
 
 ```python
-from peewee import Model, CharField, TextField, DateField, DecimalField, IntegerField, DateTimeField
-from datetime import datetime
+import httpx
 
-class TravelPlan(Model):
-    title = CharField(max_length=100)
-    description = TextField(null=True)
-    start_date = DateField()
-    end_date = DateField()
-    start_location = CharField(max_length=100, default='')
-    destination = CharField(max_length=100, default='')
-    budget_min = DecimalField(max_digits=10, decimal_places=2, default=0)
-    budget_max = DecimalField(max_digits=10, decimal_places=2, default=99999)
-    num_people = IntegerField(default=1)
-    status = CharField(max_length=20, default='draft')
-    preferences = TextField(default='[]')
-    created_at = DateTimeField(default=datetime.now)
-    updated_at = DateTimeField(default=datetime.now)
-    
-    class Meta:
-        database = None  # 将在main.py中设置
+AMAP_API_KEY = 'your_api_key'
+
+@router.get("/locations/search")
+async def search_locations(keywords: str):
+    url = "https://restapi.amap.com/v3/place/text"
+    params = {
+        "key": AMAP_API_KEY,
+        "keywords": keywords,
+        "city": "全国",
+        "offset": 20,
+        "page": 1,
+        "output": "json"
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, timeout=10.0)
+        data = response.json()
+
+    if data.get("status") != "1":
+        raise HTTPException(status_code=502, detail="地图服务查询失败")
+
+    return [to_search_response(poi) for poi in data.get("pois", [])]
 ```
-
-#### 5.2.3 Pydantic数据验证
-
-```python
-from pydantic import BaseModel, Field
-from typing import Literal, List
-from datetime import date, datetime
-from decimal import Decimal
-
-class PlanStatus:
-    DRAFT = 'draft'
-    IN_PROGRESS = 'in_progress'
-    COMPLETED = 'completed'
-    ARCHIVED = 'archived'
-
-class TravelPreference:
-    SCENIC = 'scenic'
-    FOOD = 'food'
-    ADVENTURE = 'adventure'
-    CULTURE = 'culture'
-    RELAXATION = 'relaxation'
-
-class TravelPlanCreate(BaseModel):
-    title: str = Field(..., max_length=100)
-    description: str | None = None
-    start_date: date
-    end_date: date
-    start_location: str = Field(default='', max_length=100)
-    destination: str = Field(default='', max_length=100)
-    budget_min: Decimal = Field(default=0)
-    budget_max: Decimal = Field(default=99999)
-    num_people: int = Field(default=1, ge=1)
-    status: str = Field(default='draft')
-    preferences: List[str] = Field(default_factory=list)
-```
-
-### 5.3 设计系统实现
-
-#### 5.3.1 玻璃态导航栏
-
-```css
-.header {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-}
-```
-
-#### 5.3.2 多层阴影系统
-
-```css
---shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06), 0 8px 40px rgba(0, 0, 0, 0.04);
---shadow-card: 0 2px 12px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
---shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.08), 0 20px 60px rgba(0, 0, 0, 0.06);
-```
-
-#### 5.3.3 响应式排版
-
-```css
-.title {
-  font-size: clamp(18px, 4vw, 24px);
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-```
-
-### 5.4 性能优化
-
-#### 5.4.1 前端性能优化
-
-| 优化项 | 实现方式 | 效果 |
-|--------|----------|------|
-| 按需加载 | Vue Router异步组件 | 减小首屏加载体积 |
-| CSS变量 | 全局设计Token | 提高样式复用性 |
-| 动画优化 | CSS transform/opacity | 利用GPU加速 |
-| 图片优化 | WebP格式+懒加载 | 提升加载速度 |
-
-#### 5.4.2 后端性能优化
-
-| 优化项 | 实现方式 | 效果 |
-|--------|----------|------|
-| 数据库索引 | Peewee索引定义 | 提升查询效率 |
-| 请求超时 | Axios 10s超时配置 | 防止请求挂起 |
-| 错误处理 | Pydantic自动验证 | 减少无效请求 |
 
 ---
 
-## 6. 遇到的问题及解决方案
+## 8. 遇到的问题及解决方案
 
-### 6.1 技术问题
+### 8.1 技术问题
 
 #### 问题一：Peewee EnumField导入错误
 
-**问题描述**：
-```
-ImportError: cannot import name 'EnumField' from 'peewee'
-```
+**问题描述**：`ImportError: cannot import name 'EnumField' from 'peewee'`
 
-**原因分析**：
-Peewee 3.x版本移除了EnumField类，但文档中仍引用了此API。
+**解决方案**：将EnumField改为CharField，使用常量定义枚举值
 
-**解决方案**：
-将EnumField改为CharField，使用常量定义枚举值：
+#### 问题二：地图点击事件无响应
 
-```python
-# 错误代码
-from peewee import EnumField
-
-# 正确代码
-class TravelPlan(Model):
-    status = EnumField(choices=['draft', 'in_progress', 'completed', 'archived'])
-
-# 最终方案
-status = CharField(max_length=20, default='draft')
-```
-
-#### 问题二：Pydantic自定义类型错误
-
-**问题描述**：
-```
-PydanticSchemaGenerationError: Unable to generate pydantic-core schema for <class 'app.schemas.travel_plan.PlanStatus'>
-```
-
-**原因分析**：
-Pydantic无法处理自定义枚举类的继承。
+**问题描述**：用户在地图上点击后，系统未能正确响应
 
 **解决方案**：
-使用Pydantic的Literal类型替代：
+1. 修复地理编码API结果字段名（formattedAddress → formatted_address）
+2. 优化事件监听器注册（先移除旧监听器再添加新监听器）
+3. 添加错误处理和日志输出
 
-```python
-# 错误代码
-class PlanStatus(str, Enum):
-    DRAFT = 'draft'
-    # ...
+#### 问题三：拖拽排序功能改进
 
-# 正确代码
-PlanStatus = Literal['draft', 'in_progress', 'completed', 'archived']
-```
-
-#### 问题三：前端JSX语法解析错误
-
-**问题描述**：
-```
-[PARSE_ERROR] Error: Unexpected token
-```
-
-**原因分析**：
-在Vue单文件组件中使用了JSX语法，但未配置相应的编译器。
+**问题描述**：原有拖拽需要点击"调整顺序"按钮才能触发
 
 **解决方案**：
-将JSX语法改为Vue模板语法：
+1. 移除edit-mode切换机制
+2. 默认启用拖拽功能
+3. 添加丰富的视觉反馈（缩放、阴影、透明度变化）
 
-```vue
-<!-- 错误写法 -->
-<template>
-  <div class="list">
-    {filteredPlans.map(plan => (
-      <n-card key={plan.id}>{plan.title}</n-card>
-    ))}
-  </div>
-</template>
+### 8.2 架构问题
 
-<!-- 正确写法 -->
-<template>
-  <div class="list">
-    <n-card 
-      v-for="plan in filteredPlans" 
-      :key="plan.id"
-    >
-      {{ plan.title }}
-    </n-card>
-  </div>
-</template>
+#### 问题一：外键循环导入
+
+**问题描述**：PlanLocation直接引用TravelPlan导致循环导入
+
+**解决方案**：将外键关联改为使用plan_id整数类型
+
+#### 问题二：前端依赖缺失
+
+**问题描述**：使用vuedraggable但未安装依赖
+
+**解决方案**：执行 `npm install vuedraggable@^4.1.0`
+
+---
+
+## 9. API接口文档
+
+### 9.1 规划相关接口
+
+| 方法 | 路径 | 功能 | 状态码 |
+|------|------|------|--------|
+| GET | /api/plans | 获取规划列表 | 200 |
+| GET | /api/plans/{id} | 获取规划详情 | 200/404 |
+| POST | /api/plans | 创建新规划 | 201/422 |
+| PUT | /api/plans/{id} | 更新规划 | 200/404/422 |
+| DELETE | /api/plans/{id} | 删除规划 | 204/404 |
+
+### 9.2 地点相关接口
+
+| 方法 | 路径 | 功能 | 状态码 |
+|------|------|------|--------|
+| GET | /api/plans/{plan_id}/locations | 获取规划地点列表 | 200 |
+| POST | /api/plans/{plan_id}/locations | 添加地点到规划 | 201/404 |
+| PUT | /api/plan-locations/{id} | 更新地点信息 | 200/404 |
+| DELETE | /api/plan-locations/{id} | 删除规划地点 | 200/404 |
+| PUT | /api/plans/{plan_id}/locations/reorder | 更新地点顺序 | 200 |
+| GET | /api/locations/search | 搜索地点 | 200/400 |
+| GET | /api/geocode | 地理编码 | 200/400/404 |
+
+### 9.3 接口示例
+
+#### 获取规划地点列表
+
+```http
+GET /api/plans/1/locations
 ```
 
-#### 问题四：后端API状态值访问错误
-
-**问题描述**：
-```
-AttributeError: 'str' object has no attribute 'value'
-```
-
-**原因分析**：
-在创建规划的响应中使用了`status.value`，但status已经是字符串类型。
-
-**解决方案**：
-直接返回status字段：
-
-```python
-# 错误代码
-return {"id": plan.id, "status": plan.status.value}
-
-# 正确代码
-return {"id": plan.id, "status": plan.status}
-```
-
-#### 问题五：Peewee模型refresh()方法错误
-
-**问题描述**：
-```
-AttributeError: 'TravelPlan' object has no attribute 'refresh'
+响应：
+```json
+[
+  {
+    "id": 1,
+    "plan_id": 1,
+    "location": {
+      "id": 1,
+      "name": "故宫",
+      "address": "北京市东城区景山前街4号",
+      "latitude": 39.918,
+      "longitude": 116.397
+    },
+    "order_index": 0,
+    "visit_date": null,
+    "notes": "需要提前预约",
+    "created_at": "2026-04-26T10:00:00"
+  }
+]
 ```
 
-**原因分析**：
-Peewee的Model.refresh()方法需要手动实现或使用重新查询。
+#### 添加地点
 
-**解决方案**：
-重新查询获取更新后的模型实例：
+```http
+POST /api/plans/1/locations
+Content-Type: application/json
 
-```python
-# 错误代码
-plan.update(**data)
-plan.refresh()
-
-# 正确代码
-TravelPlan.update(**data).where(TravelPlan.id == plan_id).execute()
-plan = TravelPlan.get_by_id(plan_id)
+{
+  "name": "天安门广场",
+  "address": "北京市东城区东长安街",
+  "latitude": 39.907,
+  "longitude": 116.391,
+  "description": "升旗仪式"
+}
 ```
 
-### 6.2 交互问题
+#### 搜索地点
 
-#### 问题六：表单验证逻辑错误
+```http
+GET /api/locations/search?keywords=故宫
+```
 
-**问题描述**：
-已正确填写的字段仍弹出验证警告。
-
-**原因分析**：
-表单验证规则定义过于严格，未考虑合理的空值情况。
-
-**解决方案**：
-优化表单验证规则，确保只有在字段未填写或填写不符合要求时才显示警告信息。
-
-#### 问题七：页面跳转功能失效
-
-**问题描述**：
-点击"创建规划"按钮后，系统未能执行预期的页面跳转操作。
-
-**原因分析**：
-Vue Router导航守卫中使用了已弃用的`next()`回调方式。
-
-**解决方案**：
-修改导航守卫的返回方式：
-
-```javascript
-// 错误代码
-router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || '智能出行规划器';
-  next();
-});
-
-// 正确代码
-router.beforeEach((to, from) => {
-  document.title = to.meta.title || '智能出行规划器';
-  return true;
-});
+响应：
+```json
+[
+  {
+    "name": "故宫",
+    "address": "北京市东城区景山前街4号",
+    "latitude": 39.918,
+    "longitude": 116.397
+  }
+]
 ```
 
 ---
 
-## 7. 项目进度与时间线
+## 10. 项目规范
 
-### 7.1 开发时间线
+### 10.1 前端规范
 
-| 阶段 | 开始日期 | 结束日期 | 持续时间 | 主要工作 |
-|------|----------|----------|----------|----------|
-| 需求分析 | 2026-04-26 | 2026-04-26 | 1天 | 需求确认与架构设计 |
-| 项目初始化 | 2026-04-26 | 2026-04-26 | 1天 | Monorepo结构搭建 |
-| 后端开发 | 2026-04-26 | 2026-04-26 | 1天 | 数据模型与API开发 |
-| 前端开发 | 2026-04-26 | 2026-04-26 | 1天 | 组件与页面开发 |
-| 界面优化 | 2026-04-26 | 2026-04-26 | 1天 | UI/UX优化 |
-| 测试修复 | 2026-04-26 | 2026-04-26 | 1天 | Bug修复与测试 |
+- 使用Vue 3 Composition API和`<script setup>`语法糖
+- 组件采用模块化设计，职责单一
+- 使用Pinia进行状态管理，遵循store模式
+- API调用统一封装在api目录下
+- 样式使用CSS变量，统一设计系统
+- 添加适当的动画过渡效果
 
-### 7.2 里程碑
+### 10.2 后端规范
 
-| 里程碑 | 达成日期 | 状态 |
-|--------|----------|------|
-| 项目架构搭建完成 | 2026-04-26 | ✅ 已达成 |
-| 后端API开发完成 | 2026-04-26 | ✅ 已达成 |
-| 前端CRUD功能完成 | 2026-04-26 | ✅ 已达成 |
-| 界面优化第一阶段完成 | 2026-04-26 | ✅ 已达成 |
-| 第一阶段全部任务完成 | 2026-04-26 | ✅ 已达成 |
+- 使用FastAPI异步路由
+- Pydantic模型用于数据验证
+- 遵循RESTful API设计规范
+- 统一的错误处理和响应格式
+- 外部API调用使用httpx异步客户端
 
-### 7.3 工作量统计
+### 10.3 Git提交规范
 
-| 类别 | 文件数 | 代码行数（估算） |
-|------|--------|------------------|
-| 前端Vue组件 | 4 | ~2500 |
-| 前端配置文件 | 5 | ~500 |
-| 后端Python文件 | 5 | ~800 |
-| 后端配置文件 | 1 | ~100 |
-| 文档 | 1 | ~3500 |
-| **总计** | **16** | **~7400** |
-
----
-
-## 8. 当前项目状态
-
-### 8.1 整体状态
-
-| 维度 | 状态 | 说明 |
-|------|------|------|
-| 功能完整性 | 🟢 已完成 | 第一阶段CRUD功能全部实现 |
-| 代码质量 | 🟢 良好 | 无致命Bug，结构清晰 |
-| 界面体验 | 🟢 优秀 | 现代化设计，交互流畅 |
-| 文档完备 | 🟢 良好 | 核心内容已覆盖 |
-| 性能表现 | 🟢 良好 | 首屏加载快速，响应及时 |
-
-### 8.2 服务状态
-
-| 服务 | 地址 | 状态 |
-|------|------|------|
-| 前端开发服务器 | http://localhost:5173/ | 🟢 运行中 |
-| 后端API服务器 | http://localhost:8000/ | 🟢 运行中 |
-| API文档 | http://localhost:8000/docs | 🟢 可访问 |
-| 数据库 | travel_planner.db | 🟢 正常 |
-
-### 8.3 核心功能验证
-
-| 功能 | 路径 | 验证状态 |
-|------|------|----------|
-| 查看规划列表 | GET /api/plans | ✅ 通过 |
-| 查看规划详情 | GET /api/plans/:id | ✅ 通过 |
-| 创建新规划 | POST /api/plans | ✅ 通过 |
-| 更新规划 | PUT /api/plans/:id | ✅ 通过 |
-| 删除规划 | DELETE /api/plans/:id | ✅ 通过 |
-| 前端页面渲染 | /plans | ✅ 通过 |
-| 创建规划页面 | /plans/create | ✅ 通过 |
-| 编辑规划页面 | /plans/:id/edit | ✅ 通过 |
-| 规划详情页面 | /plans/:id | ✅ 通过 |
-
----
-
-## 9. 未完成工作及后续计划
-
-### 9.1 第一阶段未完成项
-
-| 序号 | 工作项 | 优先级 | 说明 |
-|------|--------|--------|------|
-| 1 | 单元测试覆盖 | 中 | 当前无自动化测试 |
-| 2 | E2E测试 | 低 | 可使用Playwright实现 |
-| 3 | 错误边界处理 | 中 | 前端全局错误处理 |
-| 4 | 加载状态优化 | 低 |骨架屏替换loading |
-
-### 9.2 第二阶段计划
-
-| 序号 | 功能模块 | 优先级 | 说明 |
-|------|----------|--------|------|
-| 1 | 天气API集成 | P0 | 接入天气服务 |
-| 2 | 智能推荐 | P1 | 基于偏好的推荐算法 |
-| 3 | 导出功能 | P2 | PDF/Excel导出 |
-| 4 | 用户认证 | P1 | JWT认证 |
-| 5 | 数据可视化 | P2 | 出行数据统计 |
-
-### 9.3 技术优化计划
-
-| 序号 | 优化项 | 优先级 | 说明 |
-|------|--------|--------|------|
-| 1 | 缓存策略 | 中 | 引入Redis缓存 |
-| 2 | 数据库优化 | 中 | 索引优化与分页 |
-| 3 | CDN部署 | 低 | 静态资源加速 |
-| 4 | PWA支持 | 低 | 离线访问能力 |
-
----
-
-## 10. 附录
-
-### 10.1 开发环境
-
-| 项目 | 版本 | 说明 |
-|------|------|------|
-| 操作系统 | Windows | - |
-| Node.js | 18+ | 前端运行环境 |
-| Python | 3.13 | 后端运行环境 |
-| npm | 10+ | 前端包管理 |
-| pip | 25+ | Python包管理 |
-
-### 10.2 环境变量配置
-
-**前端 (.env)**：
-```
-VITE_API_BASE_URL=http://localhost:8000/api
-```
-
-**后端 (.env)**：
-```
-DATABASE_URL=sqlite:///travel_planner.db
-CORS_ORIGINS=*
-```
-
-### 10.3 启动命令
-
-**前端启动**：
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-**后端启动**：
-```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn app.main:app --reload
-```
-
-### 10.4 项目规范
-
-#### 代码规范
-- 前端遵循Vue 3官方风格指南
-- 后端遵循PEP 8 Python编码规范
-- 使用ESLint和Prettier格式化前端代码
-- 使用Black格式化Python代码
-
-#### Git规范
-- 分支命名：`feature/`、`bugfix/`、`hotfix/`
-- 提交信息：使用Conventional Commits格式
-- 代码审查：PR必须经过至少一人审查
-
-### 10.5 参考资料
-
-| 类别 | 资源 | 链接 |
-|------|------|------|
-| Vue 3文档 | Vue.js | https://vuejs.org/ |
-| Naive UI | 组件库 | https://www.naiveui.org/ |
-| FastAPI | Web框架 | https://fastapi.tiangolo.com/ |
-| Peewee | ORM | https://docs.peewee-orm.com/ |
-| Pydantic | 数据验证 | https://docs.pydantic.dev/ |
+- feat: 新功能
+- fix: Bug修复
+- docs: 文档更新
+- style: 代码格式调整
+- refactor: 重构
+- test: 测试相关
 
 ---
 
 **文档编制人**：AI Assistant
 **审核人**：待定
-**版本**：V1.0
+**版本**：V2.0
 **创建日期**：2026年4月26日
+**最后更新**：2026年4月26日

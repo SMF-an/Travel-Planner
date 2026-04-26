@@ -1,156 +1,166 @@
 <template>
   <div class="plan-form">
-    <n-card 
-      :title="isEdit ? '编辑规划' : '创建规划'" 
-      class="form-card"
-      :bordered="false"
-      size="large"
-    >
-      <n-form
-        ref="formRef"
-        :model="formData"
-        label-placement="top"
-        class="form"
+    <div v-if="currentStep === 1" class="step-basic-info">
+      <n-card
+        :title="isEdit ? '编辑规划' : '创建规划'"
+        class="form-card"
+        :bordered="false"
+        size="large"
       >
-        <div class="form-grid">
-          <n-form-item label="规划标题" path="title" class="form-item" required>
-            <n-input 
-              v-model:value="formData.title" 
-              placeholder="请输入规划标题"
-              size="large"
-              class="form-input"
-            />
-          </n-form-item>
-          
-          <n-form-item label="规划描述" path="description" class="form-item full-width">
-            <n-input
-              v-model:value="formData.description"
-              type="textarea"
-              placeholder="请输入规划描述"
-              :autosize="{ minRows: 3, maxRows: 5 }"
-              size="large"
-              class="form-textarea"
-            />
-          </n-form-item>
-          
-          <div class="form-row">
-            <n-form-item label="开始日期" path="start_date" class="form-item" required>
-              <n-date-picker 
-                v-model:value="formData.start_date" 
-                type="date"
+        <n-form
+          ref="formRef"
+          :model="formData"
+          label-placement="top"
+          class="form"
+        >
+          <div class="form-grid">
+            <n-form-item label="规划标题" path="title" class="form-item" required>
+              <n-input
+                v-model:value="formData.title"
+                placeholder="请输入规划标题"
                 size="large"
                 class="form-input"
               />
             </n-form-item>
-            
-            <n-form-item label="结束日期" path="end_date" class="form-item" required>
-              <n-date-picker 
-                v-model:value="formData.end_date" 
-                type="date"
+
+            <n-form-item label="规划描述" path="description" class="form-item full-width">
+              <n-input
+                v-model:value="formData.description"
+                type="textarea"
+                placeholder="请输入规划描述"
+                :autosize="{ minRows: 3, maxRows: 5 }"
+                size="large"
+                class="form-textarea"
+              />
+            </n-form-item>
+
+            <div class="form-row">
+              <n-form-item label="开始日期" path="start_date" class="form-item" required>
+                <n-date-picker
+                  v-model:value="formData.start_date"
+                  type="date"
+                  size="large"
+                  class="form-input"
+                />
+              </n-form-item>
+
+              <n-form-item label="结束日期" path="end_date" class="form-item" required>
+                <n-date-picker
+                  v-model:value="formData.end_date"
+                  type="date"
+                  size="large"
+                  class="form-input"
+                />
+              </n-form-item>
+            </div>
+
+            <div class="form-row">
+              <n-form-item label="最小预算" path="budget_min" class="form-item" required>
+                <n-input-number
+                  v-model:value="formData.budget_min"
+                  :min="0"
+                  placeholder="请输入最小预算"
+                  size="large"
+                  class="form-input"
+                />
+              </n-form-item>
+
+              <n-form-item label="最大预算" path="budget_max" class="form-item" required>
+                <n-input-number
+                  v-model:value="formData.budget_max"
+                  :min="0"
+                  placeholder="请输入最大预算"
+                  size="large"
+                  class="form-input"
+                />
+              </n-form-item>
+            </div>
+
+            <n-form-item label="出行人数" path="num_people" class="form-item" required>
+              <n-input-number
+                v-model:value="formData.num_people"
+                :min="1"
+                placeholder="请输入出行人数"
                 size="large"
                 class="form-input"
               />
             </n-form-item>
+
+            <n-form-item label="出行偏好" path="preferences" class="form-item full-width">
+              <n-select
+                v-model:value="formData.preferences"
+                multiple
+                filterable
+                placeholder="请选择出行偏好"
+                :options="preferenceOptions"
+                size="large"
+                class="form-select"
+              />
+            </n-form-item>
+
+            <div class="form-row">
+              <n-form-item label="出发地点" path="start_location" class="form-item" required>
+                <n-input
+                  v-model:value="formData.start_location"
+                  placeholder="请输入出发地点"
+                  size="large"
+                  class="form-input"
+                />
+              </n-form-item>
+
+              <n-form-item label="目的地" path="destination" class="form-item" required>
+                <n-input
+                  v-model:value="formData.destination"
+                  placeholder="请输入目的地"
+                  size="large"
+                  class="form-input"
+                />
+              </n-form-item>
+            </div>
           </div>
-          
-          <div class="form-row">
-            <n-form-item label="最小预算" path="budget_min" class="form-item" required>
-              <n-input-number 
-                v-model:value="formData.budget_min" 
-                :min="0" 
-                placeholder="请输入最小预算"
-                size="large"
-                class="form-input"
-              />
-            </n-form-item>
-            
-            <n-form-item label="最大预算" path="budget_max" class="form-item" required>
-              <n-input-number 
-                v-model:value="formData.budget_max" 
-                :min="0" 
-                placeholder="请输入最大预算"
-                size="large"
-                class="form-input"
-              />
-            </n-form-item>
-          </div>
-          
-          <n-form-item label="出行人数" path="num_people" class="form-item" required>
-            <n-input-number 
-              v-model:value="formData.num_people" 
-              :min="1" 
-              placeholder="请输入出行人数"
+
+          <div class="form-actions">
+            <n-button
+              type="default"
+              @click="handleCancel"
               size="large"
-              class="form-input"
-            />
-          </n-form-item>
-          
-          <n-form-item label="出行偏好" path="preferences" class="form-item full-width">
-            <n-select
-              v-model:value="formData.preferences"
-              multiple
-              filterable
-              placeholder="请选择出行偏好"
-              :options="preferenceOptions"
+              class="action-button"
+            >
+              取消
+            </n-button>
+            <n-button
+              type="info"
+              @click="handleSaveDraft"
+              :loading="store.loading"
               size="large"
-              class="form-select"
-            />
-          </n-form-item>
-          
-          <div class="form-row">
-            <n-form-item label="出发地点" path="start_location" class="form-item" required>
-              <n-input 
-                v-model:value="formData.start_location" 
-                placeholder="请输入出发地点"
-                size="large"
-                class="form-input"
-              />
-            </n-form-item>
-            
-            <n-form-item label="目的地" path="destination" class="form-item" required>
-              <n-input 
-                v-model:value="formData.destination" 
-                placeholder="请输入目的地"
-                size="large"
-                class="form-input"
-              />
-            </n-form-item>
+              class="action-button"
+            >
+              <template #icon>
+                <n-icon :component="SaveIcon" />
+              </template>
+              暂存为草稿
+            </n-button>
+            <n-button
+              type="primary"
+              @click="handleNextStep"
+              size="large"
+              class="action-button primary-button"
+            >
+              下一步
+            </n-button>
           </div>
-        </div>
-        
-        <div class="form-actions">
-          <n-button 
-            type="default" 
-            @click="handleCancel"
-            size="large"
-            class="action-button"
-          >
-            取消
-          </n-button>
-          <n-button 
-            type="info" 
-            @click="handleSaveDraft" 
-            :loading="store.loading"
-            size="large"
-            class="action-button"
-          >
-            <template #icon>
-              <n-icon :component="SaveIcon" />
-            </template>
-            暂存为草稿
-          </n-button>
-          <n-button 
-            type="primary" 
-            @click="handleSubmit" 
-            :loading="store.loading"
-            size="large"
-            class="action-button primary-button"
-          >
-            {{ isEdit ? '更新规划' : '创建规划' }}
-          </n-button>
-        </div>
-      </n-form>
-    </n-card>
+        </n-form>
+      </n-card>
+    </div>
+
+    <div v-else-if="currentStep === 2" class="step-location">
+      <LocationSelector
+        v-if="createdPlanId"
+        :plan-id="createdPlanId"
+        @back="handleBackStep"
+        @next="handleComplete"
+      />
+    </div>
   </div>
 </template>
 
@@ -159,8 +169,8 @@ import { ref, reactive, computed, onMounted, nextTick, h } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useTravelPlanStore } from '../stores/travelPlan';
 import { NCard, NForm, NFormItem, NInput, NInputNumber, NDatePicker, NSelect, NButton, NIcon } from 'naive-ui';
+import LocationSelector from '../components/LocationSelector.vue';
 
-// 保存图标
 const SaveIcon = {
   render() {
     return h('svg', {
@@ -186,42 +196,39 @@ const route = useRoute();
 const store = useTravelPlanStore();
 const formRef = ref(null);
 
+const currentStep = ref(1);
+const createdPlanId = ref(null);
+
 const planId = computed(() => route.params.id);
 const isEdit = computed(() => !!planId.value);
+const isLocationStep = computed(() => route.name === 'PlanLocations');
 
 const normalizeDateValue = (value) => {
   if (value === null || value === undefined || value === '') {
     return null;
   }
-
   if (typeof value === 'number') {
     return value;
   }
-
   if (value instanceof Date) {
     return value.getTime();
   }
-
   if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
     const [year, month, day] = value.split('-').map(Number);
     return new Date(year, month - 1, day).getTime();
   }
-
   return new Date(value).getTime();
 };
 
 const formatDateForApi = (value) => {
   const normalizedValue = normalizeDateValue(value);
-
   if (normalizedValue === null) {
     return null;
   }
-
   const date = new Date(normalizedValue);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-
   return `${year}-${month}-${day}`;
 };
 
@@ -229,11 +236,9 @@ const toTimestamp = (value) => {
   if (value === null || value === undefined || value === '') {
     return null;
   }
-
   return typeof value === 'number' ? value : new Date(value).getTime();
 };
 
-// 出行偏好选项
 const preferenceOptions = [
   { label: '自然风光', value: '自然风光' },
   { label: '历史文化', value: '历史文化' },
@@ -243,7 +248,6 @@ const preferenceOptions = [
   { label: '休闲放松', value: '休闲放松' }
 ];
 
-// 表单数据
 const formData = reactive({
   title: '',
   description: '',
@@ -281,14 +285,11 @@ const validateFormData = () => {
   return '';
 };
 
-// 取消操作
 const handleCancel = () => {
   router.push({ name: 'PlanList' });
 };
 
-// 保存草稿
 const handleSaveDraft = async () => {
-  // 保存草稿时只记录可序列化的基础值，避免日期对象在读取时失真
   localStorage.setItem('planDraft', JSON.stringify({
     ...formData,
     start_date: normalizeDateValue(formData.start_date),
@@ -298,13 +299,7 @@ const handleSaveDraft = async () => {
   router.push({ name: 'PlanList' });
 };
 
-// 提交操作
-const handleSubmit = async () => {
-  if (!formRef.value) return;
-
-  document.activeElement?.blur?.();
-  await nextTick();
-
+const handleNextStep = async () => {
   const validationMessage = validateFormData();
   if (validationMessage) {
     alert(validationMessage);
@@ -312,36 +307,42 @@ const handleSubmit = async () => {
   }
 
   try {
-    // 提交给后端时统一转换为 YYYY-MM-DD，保证与接口模型一致
     const submitData = {
       ...formData,
       start_date: formatDateForApi(formData.start_date),
       end_date: formatDateForApi(formData.end_date),
       status: isEdit.value ? store.currentPlan?.status || 'in_progress' : 'in_progress'
     };
-    
+
     let result;
     if (isEdit.value) {
       result = await store.updatePlan(planId.value, submitData);
       alert('更新成功');
     } else {
       result = await store.createPlan(submitData);
-      alert('创建成功');
-      // 清除草稿
       localStorage.removeItem('planDraft');
     }
-    
-    // 跳转到规划详情页
-    router.push({ name: 'PlanDetail', params: { id: result.id } });
+
+    createdPlanId.value = result.id;
+    currentStep.value = 2;
   } catch (err) {
     alert('操作失败，请重试');
   }
 };
 
-// 加载编辑数据和草稿
+const handleBackStep = () => {
+  currentStep.value = 1;
+};
+
+const handleComplete = () => {
+  router.push({ name: 'PlanDetail', params: { id: createdPlanId.value } });
+};
+
 onMounted(async () => {
-  if (isEdit.value) {
-    // 编辑模式：加载现有规划
+  if (isLocationStep.value && planId.value) {
+    createdPlanId.value = planId.value;
+    currentStep.value = 2;
+  } else if (isEdit.value) {
     await store.fetchPlan(planId.value);
     if (store.currentPlan) {
       Object.assign(formData, {
@@ -351,7 +352,6 @@ onMounted(async () => {
       });
     }
   } else {
-    // 新建模式：加载草稿
     const draft = localStorage.getItem('planDraft');
     if (draft) {
       try {
@@ -372,6 +372,25 @@ onMounted(async () => {
 <style scoped>
 .plan-form {
   width: 100%;
+}
+
+.step-basic-info {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.step-location {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-card {
@@ -475,48 +494,33 @@ onMounted(async () => {
   transform: translateY(0);
 }
 
-/* 响应式设计 */
 @media (max-width: 768px) {
   .form {
     padding: 0 20px 20px;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .form-actions {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .action-button {
     width: 100%;
   }
 }
 
-/* 动画效果 */
-.form-input,
-.form-textarea,
-.form-select {
-  animation: formInputAppear 0.4s ease-out;
-}
-
 @keyframes formInputAppear {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateX(-10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
-}
-
-/* 表单验证样式 */
-.n-form-item.n-form-item--error .form-input,
-.n-form-item.n-form-item--error .form-textarea,
-.n-form-item.n-form-item--error .form-select {
-  border-color: var(--color-secondary);
 }
 </style>
