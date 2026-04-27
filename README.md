@@ -2,9 +2,11 @@
 
 **项目名称**：智能出行规划器（Travel Planner）
 **项目类型**：前后端分离全栈应用
-**文档版本**：V2.0
-**编写日期**：2026年4月26日
-**项目状态**：第二阶段开发完成
+**文档版本**：V3.0
+**编写日期**：2026年4月27日
+**项目状态**：第三阶段开发完成
+
+快速运行请查看：[项目运行指南](RUN.md)
 
 ---
 
@@ -43,6 +45,7 @@
 |------|------|------|----------|
 | 第一阶段 | 规划管理 | ✅ 已完成 | 规划CRUD、地点管理 |
 | 第二阶段 | 地点选择 | ✅ 已完成 | 地图交互、地点搜索、拖拽排序 |
+| 第三阶段 | 天气信息 | ✅ 已完成 | 天气数据获取、多地点天气展示、UI一致性优化 |
 
 ---
 
@@ -50,7 +53,7 @@
 
 ### 2.1 总体目标
 
-在项目第二阶段，专注于完成**地点选择与管理模块**的完整功能实现，包括地图交互、地点搜索、拖拽排序等功能，建立完善的前后端通信机制。
+在项目第三阶段，专注于完成**天气信息展示模块**的完整功能实现，包括天气数据获取、多地点天气展示、UI一致性优化等功能，建立完善的天气API集成机制。
 
 ### 2.2 功能目标
 
@@ -76,6 +79,17 @@
 | F11 | 拖拽排序 | 用户可通过拖拽调整地点顺序 | P0 |
 | F12 | 地点详情 | 用户可查看地点详细信息 | P1 |
 
+#### 2.2.3 天气信息模块
+
+| 序号 | 功能 | 描述 | 优先级 |
+|------|------|------|--------|
+| F13 | 天气数据获取 | 调用和风天气API获取实时天气数据 | P0 |
+| F14 | 多地点天气展示 | 同时展示行程中所有地点的天气信息 | P0 |
+| F15 | 时间筛选机制 | 基于出行时间筛选天气数据 | P0 |
+| F16 | 天气信息展示 | 显示温度、天气状况、风力风向等 | P0 |
+| F17 | 出行建议 | 基于天气情况提供出行建议 | P1 |
+| F18 | UI一致性优化 | 确保天气展示页面与前两步页面风格一致 | P0 |
+
 ### 2.3 技术目标
 
 | 序号 | 目标 | 描述 | 状态 |
@@ -85,6 +99,9 @@
 | T3 | 状态管理 | 前端使用Pinia统一管理应用状态 | ✅ |
 | T4 | 地图集成 | 高德地图API集成 | ✅ |
 | T5 | 拖拽功能 | vuedraggable拖拽排序 | ✅ |
+| T6 | 天气API集成 | 和风天气API集成 | ✅ |
+| T7 | 数据缓存策略 | 前端和后端数据缓存实现 | ✅ |
+| T8 | 响应式设计 | 确保在不同设备上的良好表现 | ✅ |
 
 ---
 
@@ -106,28 +123,35 @@ travel_planner/
 │   │   ├── routes/                 # 路由目录
 │   │   │   ├── __init__.py
 │   │   │   ├── location.py        # 地点相关路由
-│   │   │   └── travel_plan.py      # 规划相关路由
+│   │   │   ├── travel_plan.py      # 规划相关路由
+│   │   │   └── weather.py          # 天气相关路由
 │   │   ├── schemas/                # 数据模式目录
 │   │   │   ├── __init__.py
 │   │   │   ├── location.py        # 地点Pydantic模型
-│   │   │   └── travel_plan.py      # 规划Pydantic模型
+│   │   │   ├── travel_plan.py      # 规划Pydantic模型
+│   │   │   └── weather.py          # 天气Pydantic模型
 │   │   └── utils/                  # 工具函数目录
-│   │       └── __init__.py
+│   │       ├── __init__.py
+│   │       └── weather.py          # 天气服务工具
 │   └── travel_planner.db           # SQLite数据库文件
 └── frontend/                        # 前端模块
     ├── public/                     # 静态资源目录
     ├── src/                        # 源代码目录
-    │   ├── api/                    # API接口封装
-    │   │   ├── location.js        # 地点相关API
-    │   │   └── travelPlan.js      # 规划相关API
-    │   ├── assets/                 # 静态资源
-    │   ├── components/             # 公共组件
-    │   │   └── LocationSelector.vue # 地点选择组件
-    │   ├── router/                # 路由配置
-    │   │   └── index.js
-    │   ├── stores/                 # Pinia状态管理
-    │   │   ├── location.js       # 地点状态管理
-    │   │   └── travelPlan.js      # 规划状态管理
+    │   │   ├── api/                    # API接口封装
+│   │   │   ├── location.js        # 地点相关API
+│   │   │   ├── travelPlan.js      # 规划相关API
+│   │   │   └── weather.js         # 天气相关API
+│   │   ├── assets/                 # 静态资源
+│   │   ├── components/             # 公共组件
+│   │   │   ├── LocationSelector.vue # 地点选择组件
+│   │   │   ├── MultiLocationWeather.vue # 多地点天气展示组件
+│   │   │   └── WeatherDisplay.vue  # 天气详情展示组件
+│   │   ├── router/                # 路由配置
+│   │   │   └── index.js
+│   │   ├── stores/                 # Pinia状态管理
+│   │   │   ├── location.js       # 地点状态管理
+│   │   │   ├── travelPlan.js      # 规划状态管理
+│   │   │   └── weather.js         # 天气状态管理
     │   ├── views/                 # 页面视图
     │   │   ├── PlanDetail.vue     # 规划详情页
     │   │   ├── PlanForm.vue       # 规划表单页
@@ -160,6 +184,7 @@ travel_planner/
 | 数据验证 | Pydantic | 2.x | 数据模型验证库 |
 | 数据库 | SQLite | 3.x | 轻量级关系型数据库 |
 | 地图服务 | 高德地图 | 2.0 | 地图展示、地理编码、地点搜索 |
+| 天气服务 | 和风天气 | 7.0 | 实时天气、天气预报、天气图标 |
 
 ### 4.2 前端架构
 
@@ -281,6 +306,33 @@ travel_planner/
 | notes | CharField | 备注 | 最大500字符 |
 | created_at | DateTimeField | 创建时间 | 自动 |
 
+### 5.4 天气信息模块
+
+#### 5.4.1 多地点天气展示 (MultiLocationWeather.vue)
+
+- **数据获取**：根据行程中的地点经纬度获取天气数据
+- **时间筛选**：基于用户出行时间筛选相关天气信息
+- **卡片式布局**：每个地点的天气信息以卡片形式展示
+- **信息展示**：显示地点名称、地址、天气状况、温度范围、风力风向等
+- **出行建议**：基于天气情况提供出行建议
+- **响应式设计**：适配不同设备屏幕
+
+#### 5.4.2 天气详情展示 (WeatherDisplay.vue)
+
+- **实时天气**：显示当前实时天气数据
+- **24小时预报**：展示未来24小时天气变化
+- **7天预报**：展示未来7天天气趋势
+- **详细信息**：显示湿度、气压、能见度等详细气象指标
+- **天气图标**：使用和风天气提供的天气图标
+
+#### 5.4.3 天气数据流程
+
+1. **前端请求**：通过经纬度向后端API请求天气数据
+2. **后端处理**：调用和风天气API获取数据，进行缓存处理
+3. **数据返回**：后端将处理后的数据返回给前端
+4. **前端展示**：前端组件渲染天气信息，提供交互功能
+5. **缓存机制**：前端和后端均实现数据缓存，减少重复请求
+
 ---
 
 ## 6. 已完成任务清单
@@ -308,6 +360,16 @@ travel_planner/
 | FT-017 | 地点拖拽排序 | ✅ 已完成 | 2026-04-26 |
 | FT-018 | 地点详情弹窗 | ✅ 已完成 | 2026-04-26 |
 | FT-019 | 规划详情地点展示 | ✅ 已完成 | 2026-04-26 |
+| FT-020 | 天气服务配置 | ✅ 已完成 | 2026-04-27 |
+| FT-021 | 天气API路由开发 | ✅ 已完成 | 2026-04-27 |
+| FT-022 | 天气服务工具类实现 | ✅ 已完成 | 2026-04-27 |
+| FT-023 | 前端天气API封装 | ✅ 已完成 | 2026-04-27 |
+| FT-024 | 天气状态管理实现 | ✅ 已完成 | 2026-04-27 |
+| FT-025 | 多地点天气展示组件 | ✅ 已完成 | 2026-04-27 |
+| FT-026 | 天气详情展示组件 | ✅ 已完成 | 2026-04-27 |
+| FT-027 | 天气数据缓存策略 | ✅ 已完成 | 2026-04-27 |
+| FT-028 | 天气信息时间筛选 | ✅ 已完成 | 2026-04-27 |
+| FT-029 | 天气出行建议生成 | ✅ 已完成 | 2026-04-27 |
 
 ### 6.2 界面优化任务
 
@@ -321,6 +383,11 @@ travel_planner/
 | UT-006 | 响应式布局适配 | ✅ 已完成 | 2026-04-26 |
 | UT-007 | 页面过渡动画 | ✅ 已完成 | 2026-04-26 |
 | UT-008 | 拖拽视觉反馈 | ✅ 已完成 | 2026-04-26 |
+| UT-009 | 天气卡片UI设计 | ✅ 已完成 | 2026-04-27 |
+| UT-010 | 天气信息布局优化 | ✅ 已完成 | 2026-04-27 |
+| UT-011 | 天气展示页面UI一致性 | ✅ 已完成 | 2026-04-27 |
+| UT-012 | 天气图标集成 | ✅ 已完成 | 2026-04-27 |
+| UT-013 | 天气信息响应式适配 | ✅ 已完成 | 2026-04-27 |
 
 ### 6.3 Bug修复任务
 
@@ -335,6 +402,11 @@ travel_planner/
 | BF-007 | Vue Router导航警告 | 修改守卫返回方式 | ✅ 已修复 |
 | BF-008 | 地图点击事件无响应 | 修复地理编码API调用和事件监听器注册 | ✅ 已修复 |
 | BF-009 | 地理编码结果字段名错误 | formattedAddress改为formatted_address | ✅ 已修复 |
+| BF-010 | 天气信息未显示问题 | 修复数据传递和组件调用逻辑 | ✅ 已修复 |
+| BF-011 | 组件重复调用问题 | 移除重复的onMounted调用，仅保留watch的immediate: true | ✅ 已修复 |
+| BF-012 | 模板字符串使用错误 | 将模板字符串改为字符串拼接 | ✅ 已修复 |
+| BF-013 | weatherStore不支持多地点 | 修改weatherStore，使用Map存储多个地点的天气数据 | ✅ 已修复 |
+| BF-014 | UI视觉不一致问题 | 统一使用CSS变量，优化样式设计 | ✅ 已修复 |
 
 ---
 
@@ -446,6 +518,123 @@ export const useLocationStore = defineStore('location', {
 </draggable>
 ```
 
+#### 7.1.4 天气状态管理
+
+```javascript
+import { defineStore } from 'pinia';
+import { weatherApi } from '../api/weather';
+
+export const useWeatherStore = defineStore('weather', {
+  state: () => ({
+    locationsWeather: new Map(), // 存储多个地点的天气数据
+    loading: false,
+    error: null,
+    cache: new Map()
+  }),
+  
+  getters: {
+    getLocationWeather: (state) => (lat, lon) => {
+      const key = `${lat},${lon}`;
+      return state.locationsWeather.get(key);
+    }
+  },
+  
+  actions: {
+    async fetchWeatherData(lat, lon) {
+      const cacheKey = `${lat},${lon}`;
+      // 检查缓存
+      if (this.cache.has(cacheKey)) {
+        const cachedData = this.cache.get(cacheKey);
+        const now = Date.now();
+        // 缓存有效期为10分钟
+        if (now - cachedData.timestamp < 10 * 60 * 1000) {
+          this.locationsWeather.set(cacheKey, cachedData);
+          return cachedData;
+        }
+      }
+      
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        const [currentWeather, hourlyWeather, dailyWeather] = await Promise.all([
+          weatherApi.getCurrentWeather(lat, lon),
+          weatherApi.getHourlyWeather(lat, lon),
+          weatherApi.getDailyWeather(lat, lon)
+        ]);
+        
+        const weatherData = {
+          current: currentWeather.data,
+          hourly: hourlyWeather.data,
+          daily: dailyWeather.data,
+          timestamp: Date.now()
+        };
+        
+        this.locationsWeather.set(cacheKey, weatherData);
+        this.cache.set(cacheKey, weatherData);
+        
+        return weatherData;
+      } catch (error) {
+        this.error = '获取天气数据失败';
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
+});
+```
+
+#### 7.1.5 多地点天气展示
+
+```vue
+<template>
+  <div class="multi-location-weather">
+    <!-- 加载状态 -->
+    <div v-if="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>正在获取天气数据...</p>
+    </div>
+    <!-- 天气信息 -->
+    <div v-else-if="locations.length > 0" class="weather-content">
+      <h3>行程天气信息</h3>
+      <!-- 时间筛选器 -->
+      <div class="date-filter">
+        <n-select
+          v-model:value="selectedDate"
+          placeholder="选择日期"
+          class="date-select"
+        >
+          <n-option
+            v-for="date in travelDates"
+            :key="date"
+            :value="date"
+          >
+            {{ formatDisplayDate(date) }}
+          </n-option>
+        </n-select>
+      </div>
+      <!-- 地点天气卡片 -->
+      <div class="locations-grid">
+        <div
+          v-for="location in locations"
+          :key="location.id"
+          class="location-card"
+        >
+          <div class="location-header">
+            <h4>{{ location.location.name }}</h4>
+            <p class="location-address">{{ location.location.address }}</p>
+          </div>
+          <div class="weather-data">
+            <!-- 天气信息展示 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+```
+
 ### 7.2 后端关键技术
 
 #### 7.2.1 FastAPI路由设计
@@ -513,6 +702,106 @@ async def search_locations(keywords: str):
     return [to_search_response(poi) for poi in data.get("pois", [])]
 ```
 
+#### 7.2.3 天气服务实现
+
+```python
+from functools import lru_cache
+import httpx
+from app.config import WEATHER
+
+class WeatherService:
+    def __init__(self):
+        self.api_key = WEATHER['API_KEY']
+        self.api_url = WEATHER['API_URL']
+        self.hourly_url = WEATHER['HOURLY_URL']
+        self.daily_url = WEATHER['DAILY_URL']
+        self.icon_url = WEATHER['ICON_URL']
+    
+    @lru_cache(maxsize=100)
+    async def get_current_weather(self, lat, lon):
+        params = {
+            'key': self.api_key,
+            'location': f'{lon},{lat}'
+        }
+        return await self._make_request(self.api_url, params)
+    
+    @lru_cache(maxsize=100)
+    async def get_hourly_weather(self, lat, lon):
+        params = {
+            'key': self.api_key,
+            'location': f'{lon},{lat}'
+        }
+        return await self._make_request(self.hourly_url, params)
+    
+    @lru_cache(maxsize=100)
+    async def get_daily_weather(self, lat, lon):
+        params = {
+            'key': self.api_key,
+            'location': f'{lon},{lat}'
+        }
+        return await self._make_request(self.daily_url, params)
+    
+    async def _make_request(self, url, params):
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.get(url, params=params, timeout=10.0)
+                response.raise_for_status()
+                return response.json()
+            except httpx.RequestError as e:
+                raise HTTPException(status_code=503, detail=f"天气服务请求失败: {str(e)}")
+            except httpx.HTTPStatusError as e:
+                raise HTTPException(status_code=e.response.status_code, detail=f"天气服务错误: {e.response.text}")
+```
+
+#### 7.2.4 天气API路由
+
+```python
+from fastapi import APIRouter, HTTPException, Query
+from app.utils.weather import WeatherService
+
+router = APIRouter()
+weather_service = WeatherService()
+
+@router.get("/weather/current")
+async def get_current_weather(
+    lat: float = Query(..., description="纬度"),
+    lon: float = Query(..., description="经度")
+):
+    try:
+        weather_data = await weather_service.get_current_weather(lat, lon)
+        if 'code' in weather_data and weather_data['code'] != '200':
+            raise HTTPException(status_code=400, detail=f"天气服务错误: {weather_data.get('msg', '未知错误')}")
+        return weather_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取天气数据失败: {str(e)}")
+
+@router.get("/weather/hourly")
+async def get_hourly_weather(
+    lat: float = Query(..., description="纬度"),
+    lon: float = Query(..., description="经度")
+):
+    try:
+        weather_data = await weather_service.get_hourly_weather(lat, lon)
+        if 'code' in weather_data and weather_data['code'] != '200':
+            raise HTTPException(status_code=400, detail=f"天气服务错误: {weather_data.get('msg', '未知错误')}")
+        return weather_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取天气数据失败: {str(e)}")
+
+@router.get("/weather/daily")
+async def get_daily_weather(
+    lat: float = Query(..., description="纬度"),
+    lon: float = Query(..., description="经度")
+):
+    try:
+        weather_data = await weather_service.get_daily_weather(lat, lon)
+        if 'code' in weather_data and weather_data['code'] != '200':
+            raise HTTPException(status_code=400, detail=f"天气服务错误: {weather_data.get('msg', '未知错误')}")
+        return weather_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取天气数据失败: {str(e)}")
+```
+
 ---
 
 ## 8. 遇到的问题及解决方案
@@ -543,6 +832,27 @@ async def search_locations(keywords: str):
 2. 默认启用拖拽功能
 3. 添加丰富的视觉反馈（缩放、阴影、透明度变化）
 
+#### 问题四：天气信息未显示问题
+
+**问题描述**：用户完成地点选择后天气信息未能正确显示
+
+**解决方案**：
+1. 修复数据传递问题：正确提取经纬度数据
+2. 优化组件调用逻辑：确保组件正确接收和处理数据
+3. 添加错误处理和日志输出
+
+#### 问题五：组件重复调用问题
+
+**问题描述**：WeatherDisplay.vue中同时使用watch的immediate: true和onMounted，导致重复请求天气数据
+
+**解决方案**：移除onMounted调用，仅保留watch的immediate: true
+
+#### 问题六：模板字符串使用错误
+
+**问题描述**：在Vue模板中使用错误的模板字符串语法，导致图标URL无法正确生成
+
+**解决方案**：将模板字符串改为字符串拼接
+
 ### 8.2 架构问题
 
 #### 问题一：外键循环导入
@@ -556,6 +866,21 @@ async def search_locations(keywords: str):
 **问题描述**：使用vuedraggable但未安装依赖
 
 **解决方案**：执行 `npm install vuedraggable@^4.1.0`
+
+#### 问题三：weatherStore不支持多地点
+
+**问题描述**：原weatherStore每次调用fetchWeatherData会覆盖当前天气数据，不支持多地点存储
+
+**解决方案**：修改weatherStore，使用Map存储多个地点的天气数据，新增getLocationWeather getter方法
+
+#### 问题四：UI视觉不一致问题
+
+**问题描述**：天气展示页面样式与前两步页面不一致，未使用统一的CSS变量和设计元素
+
+**解决方案**：
+1. 修改MultiLocationWeather.vue和WeatherDisplay.vue的样式
+2. 使用前两步页面中定义的CSS变量
+3. 统一圆角、颜色、间距等设计元素
 
 ---
 
@@ -582,6 +907,15 @@ async def search_locations(keywords: str):
 | PUT | /api/plans/{plan_id}/locations/reorder | 更新地点顺序 | 200 |
 | GET | /api/locations/search | 搜索地点 | 200/400 |
 | GET | /api/geocode | 地理编码 | 200/400/404 |
+
+### 9.3 天气相关接口
+
+| 方法 | 路径 | 功能 | 状态码 |
+|------|------|------|--------|
+| GET | /api/weather/current | 获取实时天气 | 200/400/500 |
+| GET | /api/weather/hourly | 获取24小时天气预报 | 200/400/500 |
+| GET | /api/weather/daily | 获取7天天气预报 | 200/400/500 |
+| GET | /api/weather/summary | 获取天气摘要 | 200/400/500 |
 
 ### 9.3 接口示例
 
@@ -645,6 +979,68 @@ GET /api/locations/search?keywords=故宫
 ]
 ```
 
+#### 获取实时天气
+
+```http
+GET /api/weather/current?lat=39.918&lon=116.397
+```
+
+响应：
+```json
+{
+  "code": "200",
+  "updateTime": "2026-04-27T10:00:00Z",
+  "now": {
+    "temp": "22",
+    "feelsLike": "24",
+    "icon": "100",
+    "text": "晴",
+    "wind360": "180",
+    "windDir": "南风",
+    "windScale": "3",
+    "windSpeed": "15",
+    "humidity": "45",
+    "precip": "0",
+    "pressure": "1013",
+    "vis": "25",
+    "cloud": "10",
+    "dew": "10"
+  }
+}
+```
+
+#### 获取24小时天气预报
+
+```http
+GET /api/weather/hourly?lat=39.918&lon=116.397
+```
+
+响应：
+```json
+{
+  "code": "200",
+  "updateTime": "2026-04-27T10:00:00Z",
+  "hourly": [
+    {
+      "fxTime": "2026-04-27T10:00:00Z",
+      "temp": "22",
+      "icon": "100",
+      "text": "晴",
+      "wind360": "180",
+      "windDir": "南风",
+      "windScale": "3",
+      "windSpeed": "15",
+      "humidity": "45",
+      "precip": "0",
+      "pressure": "1013",
+      "cloud": "10",
+      "dew": "10"
+    }
+    // 更多小时预报...
+  ]
+}
+```
+
 ---
 
 ## 10. 项目规范
@@ -677,8 +1073,46 @@ GET /api/locations/search?keywords=故宫
 
 ---
 
+## 11. 待处理事项
+
+| 事项编号 | 事项描述 | 优先级 | 负责人 | 预计完成时间 |
+|----------|----------|--------|--------|--------------|
+| TODO-001 | 完善天气出行建议算法 | 中 | 开发团队 | 2026-05-05 |
+| TODO-002 | 添加天气预警信息展示 | 中 | 开发团队 | 2026-05-10 |
+| TODO-003 | 优化天气数据缓存策略 | 低 | 开发团队 | 2026-05-15 |
+| TODO-004 | 添加天气数据可视化图表 | 低 | 开发团队 | 2026-05-20 |
+| TODO-005 | 完善用户体验测试 | 中 | 测试团队 | 2026-05-25 |
+
+## 12. 下一阶段开发计划
+
+### 12.1 第四阶段：智能推荐模块
+
+- **开发时间**：2026年5月1日 - 2026年5月30日
+- **核心功能**：
+  - 基于用户历史规划和天气数据的智能景点推荐
+  - 行程路线智能优化
+  - 个性化出行建议
+- **技术重点**：
+  - 推荐算法设计与实现
+  - 机器学习模型集成
+  - 实时数据分析与处理
+
+### 12.2 第五阶段：项目收尾与部署
+
+- **开发时间**：2026年6月1日 - 2026年6月30日
+- **核心功能**：
+  - 系统集成测试
+  - 性能优化
+  - 部署上线
+- **技术重点**：
+  - 系统性能测试与优化
+  - 安全漏洞扫描
+  - 容器化部署
+
+---
+
 **文档编制人**：AI Assistant
 **审核人**：待定
-**版本**：V2.0
+**版本**：V3.0
 **创建日期**：2026年4月26日
-**最后更新**：2026年4月26日
+**最后更新**：2026年4月27日

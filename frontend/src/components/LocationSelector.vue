@@ -178,8 +178,8 @@
       </n-form>
       <template #footer>
         <div class="modal-footer">
-          <n-button @click="showEditModal = false">取消</n-button>
-          <n-button type="primary" @click="handleSaveEdit" :loading="saveLoading">保存</n-button>
+          <n-button @click="showEditModal = false" class="modal-button">取消</n-button>
+          <n-button type="primary" @click="handleSaveEdit" :loading="saveLoading" class="modal-button modal-button-primary">保存</n-button>
         </div>
       </template>
     </n-modal>
@@ -214,9 +214,15 @@
     </n-modal>
 
     <div class="action-bar">
-      <n-button size="large" @click="handleBack">返回上一步</n-button>
-      <n-button type="primary" size="large" @click="handleNext" :disabled="locationStore.getLocationCount === 0">
-        完成地点选择
+      <n-button size="large" @click="handleBack" class="action-button">返回上一步</n-button>
+      <n-button
+        type="primary"
+        size="large"
+        @click="handleNext"
+        :disabled="locationStore.getLocationCount === 0"
+        class="action-button primary-button"
+      >
+        下一步
       </n-button>
     </div>
   </div>
@@ -808,7 +814,6 @@ onUnmounted(() => {
   if (detailMapInstance.value) {
     detailMapInstance.value.destroy();
   }
-  locationStore.clearLocations();
   locationStore.clearSearchResults();
 });
 </script>
@@ -817,6 +822,35 @@ onUnmounted(() => {
 .location-selector {
   width: 100%;
   padding: 24px 0;
+}
+
+:deep(.n-button) {
+  border-radius: var(--radius-sm);
+}
+
+:deep(.n-input),
+:deep(.n-input .n-input-wrapper),
+:deep(.n-input-number),
+:deep(.n-input-number .n-input-number-input),
+:deep(.n-base-selection),
+:deep(.n-base-selection .n-base-selection-label) {
+  border-radius: var(--radius-sm);
+}
+
+:deep(.n-modal) {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+:deep(.n-modal .n-card-header) {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 14px;
+}
+
+:deep(.n-modal .n-card__content) {
+  padding-top: 20px;
 }
 
 .location-header {
@@ -905,7 +939,7 @@ onUnmounted(() => {
   max-height: 240px;
   overflow-y: auto;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
 }
 
 .search-result-item {
@@ -1041,7 +1075,8 @@ onUnmounted(() => {
   gap: 12px;
   padding: 14px;
   background: var(--color-background);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
   transition: all var(--transition-fast);
   cursor: grab;
   user-select: none;
@@ -1091,9 +1126,10 @@ onUnmounted(() => {
 }
 
 .location-index {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
   background: var(--color-primary);
   color: white;
   display: flex;
@@ -1143,6 +1179,18 @@ onUnmounted(() => {
   gap: 12px;
 }
 
+.modal-button {
+  border-radius: var(--radius-sm);
+  padding: 10px 22px;
+  font-weight: 500;
+}
+
+.modal-button-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border: none;
+  color: white;
+}
+
 .location-detail {
   display: flex;
   flex-direction: column;
@@ -1151,8 +1199,9 @@ onUnmounted(() => {
 
 .detail-map {
   height: 180px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
 .detail-map-container {
@@ -1164,6 +1213,10 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  background: var(--color-background);
 }
 
 .detail-name {
@@ -1184,7 +1237,44 @@ onUnmounted(() => {
 .action-bar {
   display: flex;
   justify-content: space-between;
+  gap: 16px;
   padding-top: 24px;
   border-top: 1px solid var(--color-border);
+}
+
+.action-button {
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-normal);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.primary-button {
+  padding: 12px 32px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border: none;
+  color: white;
+  box-shadow: var(--shadow-card);
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.action-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .action-bar {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+  }
 }
 </style>

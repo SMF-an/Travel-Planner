@@ -158,8 +158,42 @@
         v-if="createdPlanId"
         :plan-id="createdPlanId"
         @back="handleBackStep"
-        @next="handleComplete"
+        @next="handleNextStep"
       />
+    </div>
+
+    <div v-else-if="currentStep === 3" class="step-weather">
+      <n-card
+        title="天气信息"
+        class="form-card"
+        :bordered="false"
+        size="large"
+      >
+        <MultiLocationWeather
+          :locations="locationStore.locations"
+          :start-date="formData.start_date"
+          :end-date="formData.end_date"
+        />
+
+        <div class="form-actions">
+          <n-button
+            type="default"
+            @click="handleBackStep"
+            size="large"
+            class="action-button"
+          >
+            上一步
+          </n-button>
+          <n-button
+            type="primary"
+            @click="handleComplete"
+            size="large"
+            class="action-button primary-button"
+          >
+            完成
+          </n-button>
+        </div>
+      </n-card>
     </div>
   </div>
 </template>
@@ -168,8 +202,10 @@
 import { ref, reactive, computed, onMounted, nextTick, h } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useTravelPlanStore } from '../stores/travelPlan';
+import { useLocationStore } from '../stores/location';
 import { NCard, NForm, NFormItem, NInput, NInputNumber, NDatePicker, NSelect, NButton, NIcon } from 'naive-ui';
 import LocationSelector from '../components/LocationSelector.vue';
+import MultiLocationWeather from '../components/MultiLocationWeather.vue';
 
 const SaveIcon = {
   render() {
@@ -194,6 +230,7 @@ const SaveIcon = {
 const router = useRouter();
 const route = useRoute();
 const store = useTravelPlanStore();
+const locationStore = useLocationStore();
 const formRef = ref(null);
 
 const currentStep = ref(1);
@@ -300,38 +337,46 @@ const handleSaveDraft = async () => {
 };
 
 const handleNextStep = async () => {
-  const validationMessage = validateFormData();
-  if (validationMessage) {
-    alert(validationMessage);
-    return;
-  }
-
-  try {
-    const submitData = {
-      ...formData,
-      start_date: formatDateForApi(formData.start_date),
-      end_date: formatDateForApi(formData.end_date),
-      status: isEdit.value ? store.currentPlan?.status || 'in_progress' : 'in_progress'
-    };
-
-    let result;
-    if (isEdit.value) {
-      result = await store.updatePlan(planId.value, submitData);
-      alert('更新成功');
-    } else {
-      result = await store.createPlan(submitData);
-      localStorage.removeItem('planDraft');
+  if (currentStep.value === 1) {
+    const validationMessage = validateFormData();
+    if (validationMessage) {
+      alert(validationMessage);
+      return;
     }
 
-    createdPlanId.value = result.id;
-    currentStep.value = 2;
-  } catch (err) {
-    alert('操作失败，请重试');
+    try {
+      const submitData = {
+        ...formData,
+        start_date: formatDateForApi(formData.start_date),
+        end_date: formatDateForApi(formData.end_date),
+        status: isEdit.value ? store.currentPlan?.status || 'in_progress' : 'in_progress'
+      };
+
+      let result;
+      if (isEdit.value) {
+        result = await store.updatePlan(planId.value, submitData);
+        alert('更新成功');
+      } else {
+        result = await store.createPlan(submitData);
+        localStorage.removeItem('planDraft');
+      }
+
+      createdPlanId.value = result.id;
+      currentStep.value = 2;
+    } catch (err) {
+      alert('操作失败，请重试');
+    }
+  } else if (currentStep.value === 2) {
+    currentStep.value = 3;
   }
 };
 
 const handleBackStep = () => {
-  currentStep.value = 1;
+  if (currentStep.value === 3) {
+    currentStep.value = 2;
+  } else if (currentStep.value === 2) {
+    currentStep.value = 1;
+  }
 };
 
 const handleComplete = () => {
@@ -381,6 +426,12 @@ onMounted(async () => {
 .step-location {
   animation: fadeIn 0.3s ease-out;
 }
+
+.step-weather {
+  animation: fadeIn 0.3s ease-out;
+}
+
+
 
 @keyframes fadeIn {
   from {
