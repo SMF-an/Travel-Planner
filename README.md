@@ -2,9 +2,9 @@
 
 **项目名称**：智能出行规划器（Travel Planner）
 **项目类型**：前后端分离全栈应用
-**文档版本**：V3.0
-**编写日期**：2026年4月27日
-**项目状态**：第三阶段开发完成
+**文档版本**：V4.0
+**编写日期**：2026年4月28日
+**项目状态**：第四阶段开发进行中
 
 快速运行请查看：[项目运行指南](RUN.md)
 
@@ -46,6 +46,7 @@
 | 第一阶段 | 规划管理 | ✅ 已完成 | 规划CRUD、地点管理 |
 | 第二阶段 | 地点选择 | ✅ 已完成 | 地图交互、地点搜索、拖拽排序 |
 | 第三阶段 | 天气信息 | ✅ 已完成 | 天气数据获取、多地点天气展示、UI一致性优化 |
+| 第四阶段 | 行程安排 | 🔄 进行中 | 时间规划、时间轴展示、地点时间段分配 |
 
 ---
 
@@ -90,6 +91,17 @@
 | F17 | 出行建议 | 基于天气情况提供出行建议 | P1 |
 | F18 | UI一致性优化 | 确保天气展示页面与前两步页面风格一致 | P0 |
 
+#### 2.2.4 行程安排模块
+
+| 序号 | 功能 | 描述 | 优先级 |
+|------|------|------|--------|
+| F19 | 时间段分配 | 为每个地点分配上午/下午/晚上时间段 | P0 |
+| F20 | 日期选择 | 从出行日期范围内选择具体访问日期 | P0 |
+| F21 | 时间冲突处理 | 检测并提示时间冲突 | P1 |
+| F22 | 行程时间轴 | 展示按时间排序的行程安排 | P0 |
+| F23 | 行程详情查看 | 点击行程项目查看详细信息 | P0 |
+| F24 | 行程保存与同步 | 实时保存行程规划到后端 | P0 |
+
 ### 2.3 技术目标
 
 | 序号 | 目标 | 描述 | 状态 |
@@ -102,6 +114,8 @@
 | T6 | 天气API集成 | 和风天气API集成 | ✅ |
 | T7 | 数据缓存策略 | 前端和后端数据缓存实现 | ✅ |
 | T8 | 响应式设计 | 确保在不同设备上的良好表现 | ✅ |
+| T9 | 时间轴组件开发 | TripTimeline组件设计与实现 | ✅ |
+| T10 | 行程数据排序算法 | 按日期和时间段自动排序 | ✅ |
 
 ---
 
@@ -145,7 +159,9 @@ travel_planner/
 │   │   ├── components/             # 公共组件
 │   │   │   ├── LocationSelector.vue # 地点选择组件
 │   │   │   ├── MultiLocationWeather.vue # 多地点天气展示组件
-│   │   │   └── WeatherDisplay.vue  # 天气详情展示组件
+│   │   │   ├── WeatherDisplay.vue  # 天气详情展示组件
+│   │   │   ├── SchedulePlanner.vue # 行程时间规划组件
+│   │   │   └── TripTimeline.vue   # 行程时间轴展示组件
 │   │   ├── router/                # 路由配置
 │   │   │   └── index.js
 │   │   ├── stores/                 # Pinia状态管理
@@ -299,11 +315,13 @@ travel_planner/
 | 字段名 | 数据类型 | 说明 | 约束 |
 |--------|----------|------|------|
 | id | AutoField | 主键 | 自增 |
-| location | ForeignKeyField | 关联地点 | 外键 |
+| location_id | IntegerField | 地点ID | 必填 |
 | plan_id | IntegerField | 规划ID | 必填 |
 | order_index | IntegerField | 排序索引 | 默认0 |
 | visit_date | CharField | 访问日期 | 最大50字符 |
+| visit_time_slot | CharField | 访问时间段 | 上午/下午/晚上 |
 | notes | CharField | 备注 | 最大500字符 |
+| updated_at | DateTimeField | 更新时间 | 自动 |
 | created_at | DateTimeField | 创建时间 | 自动 |
 
 ### 5.4 天气信息模块
@@ -332,6 +350,32 @@ travel_planner/
 3. **数据返回**：后端将处理后的数据返回给前端
 4. **前端展示**：前端组件渲染天气信息，提供交互功能
 5. **缓存机制**：前端和后端均实现数据缓存，减少重复请求
+
+### 5.5 行程安排模块
+
+#### 5.5.1 行程时间规划 (SchedulePlanner.vue)
+
+- **日期范围选择**：用户可从出行日期范围内选择具体访问日期
+- **时间段分配**：为每个地点分配上午/下午/晚上时间段
+- **备注信息**：用户可为每个地点添加游玩备注
+- **实时保存**：选择或修改后自动保存到后端
+- **状态管理**：使用Pinia管理行程规划状态
+- **冲突检测**：同一天同一时间段只能安排一个地点
+
+#### 5.5.2 行程时间轴展示 (TripTimeline.vue)
+
+- **时间轴设计**：垂直时间轴布局，左侧有圆点标记和连接线
+- **时间段颜色区分**：
+  - 上午：橙色渐变 (`#FFB74D` → `#FFA726`)
+  - 下午：蓝色渐变 (`#4FC3F7` → `#29B6F6`)
+  - 晚上：紫色渐变 (`#7E57C2` → `#5E35B1`)
+- **信息展示**：日期、时间段、地点名称、地址、备注
+- **点击交互**：点击行程卡片展开/收起详情面板
+- **详情展示**：经纬度、推荐游玩时长、查看地图按钮
+- **响应式设计**：适配不同屏幕尺寸
+- **加载状态**：旋转加载动画 + 友好提示
+- **错误处理**：错误结果展示 + 重试按钮
+- **空状态处理**：空状态提示 + 添加行程入口
 
 ---
 
@@ -370,6 +414,13 @@ travel_planner/
 | FT-027 | 天气数据缓存策略 | ✅ 已完成 | 2026-04-27 |
 | FT-028 | 天气信息时间筛选 | ✅ 已完成 | 2026-04-27 |
 | FT-029 | 天气出行建议生成 | ✅ 已完成 | 2026-04-27 |
+| FT-030 | 行程时间规划组件开发 | ✅ 已完成 | 2026-04-28 |
+| FT-031 | 行程时间轴组件开发 | ✅ 已完成 | 2026-04-28 |
+| FT-032 | 日期时间选择功能 | ✅ 已完成 | 2026-04-28 |
+| FT-033 | 时间段分配功能 | ✅ 已完成 | 2026-04-28 |
+| FT-034 | 行程数据排序展示 | ✅ 已完成 | 2026-04-28 |
+| FT-035 | 行程详情点击交互 | ✅ 已完成 | 2026-04-28 |
+| FT-036 | 时间段选择事件冒泡修复 | ✅ 已完成 | 2026-04-28 |
 
 ### 6.2 界面优化任务
 
@@ -407,6 +458,10 @@ travel_planner/
 | BF-012 | 模板字符串使用错误 | 将模板字符串改为字符串拼接 | ✅ 已修复 |
 | BF-013 | weatherStore不支持多地点 | 修改weatherStore，使用Map存储多个地点的天气数据 | ✅ 已修复 |
 | BF-014 | UI视觉不一致问题 | 统一使用CSS变量，优化样式设计 | ✅ 已修复 |
+| BF-015 | 数据库字段缺失 | 删除旧数据库文件并重启后端服务 | ✅ 已修复 |
+| BF-016 | 天气页面跳转空白页 | 修复SchedulePlanner.vue组件初始化顺序错误 | ✅ 已修复 |
+| BF-017 | 时间段选择功能失效 | 使用@click.stop阻止事件冒泡，使用Naive UI按钮组件 | ✅ 已修复 |
+| BF-018 | ChevronDownIcon双引号语法错误 | 修复TripTimeline.vue中的双引号问题 | ✅ 已修复 |
 
 ---
 
@@ -633,6 +688,77 @@ export const useWeatherStore = defineStore('weather', {
     </div>
   </div>
 </template>
+```
+
+#### 7.1.6 行程时间轴展示
+
+```vue
+<template>
+  <div class="trip-timeline">
+    <div class="timeline-header">
+      <h3 class="timeline-title">
+        <n-icon :component="RouteIcon" class="title-icon" />
+        行程安排
+      </h3>
+      <div class="timeline-stats">
+        <span class="stat-item">
+          <n-icon :component="CalendarIcon" />
+          {{ scheduledCount }} 个行程
+        </span>
+      </div>
+    </div>
+
+    <!-- 加载状态 -->
+    <div v-if="loading && items.length === 0" class="timeline-loading">
+      <n-spin size="large" />
+      <span class="loading-text">加载行程中...</span>
+    </div>
+
+    <!-- 时间轴内容 -->
+    <div v-else class="timeline-content">
+      <div class="timeline-track">
+        <div
+          v-for="(item, index) in visibleItems"
+          :key="item.id"
+          class="timeline-item"
+          :class="{ expanded: expandedId === item.id }"
+          @click="toggleExpand(item)"
+        >
+          <div class="timeline-marker">
+            <div class="marker-dot" :class="getTimeSlotClass(item.visit_time_slot)">
+              <n-icon :component="getTimeSlotIcon(item.visit_time_slot)" />
+            </div>
+            <div v-if="index < visibleItems.length - 1" class="marker-line"></div>
+          </div>
+          <div class="timeline-card">
+            <div class="date-badge">
+              <span class="date-month">{{ formatMonth(item.visit_date) }}</span>
+              <span class="date-day">{{ formatDay(item.visit_date) }}</span>
+            </div>
+            <div class="time-slot-badge" :class="getTimeSlotClass(item.visit_time_slot)">
+              {{ item.visit_time_slot }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+// 时间段排序：上午 -> 下午 -> 晚上
+const slotOrder = { '上午': 0, '下午': 1, '晚上': 2 };
+
+const scheduledLocations = computed(() => {
+  return locationStore.locations
+    .filter(loc => loc.visit_date && loc.visit_time_slot)
+    .sort((a, b) => {
+      const dateCompare = a.visit_date.localeCompare(b.visit_date);
+      if (dateCompare !== 0) return dateCompare;
+      return (slotOrder[a.visit_time_slot] || 0) - (slotOrder[b.visit_time_slot] || 0);
+    });
+});
+</script>
 ```
 
 ### 7.2 后端关键技术
@@ -1082,29 +1208,39 @@ GET /api/weather/hourly?lat=39.918&lon=116.397
 | TODO-003 | 优化天气数据缓存策略 | 低 | 开发团队 | 2026-05-15 |
 | TODO-004 | 添加天气数据可视化图表 | 低 | 开发团队 | 2026-05-20 |
 | TODO-005 | 完善用户体验测试 | 中 | 测试团队 | 2026-05-25 |
+| TODO-006 | 行程路线智能优化建议 | 中 | 开发团队 | 2026-05-30 |
+| TODO-007 | 添加行程导出功能（PDF/日历） | 中 | 开发团队 | 2026-06-10 |
 
-## 12. 下一阶段开发计划
+## 12. 第四阶段开发进度
 
-### 12.1 第四阶段：智能推荐模块
+### 12.1 已完成功能
 
-- **开发时间**：2026年5月1日 - 2026年5月30日
+- ✅ 行程时间规划组件 (SchedulePlanner.vue)
+- ✅ 行程时间轴展示组件 (TripTimeline.vue)
+- ✅ 日期时间选择功能
+- ✅ 时间段分配功能（上午/下午/晚上）
+- ✅ 行程数据按日期和时间段排序
+- ✅ 行程详情点击交互展开
+- ✅ 加载状态和错误处理
+- ✅ 响应式设计适配
+- ✅ 事件冒泡问题修复
+- ✅ 时间段选择功能修复
+
+### 12.2 下一阶段计划
+
+#### 第五阶段：智能推荐与收尾
+
+- **开发时间**：2026年5月1日 - 2026年6月30日
 - **核心功能**：
-  - 基于用户历史规划和天气数据的智能景点推荐
+  - 基于历史规划的智能景点推荐
   - 行程路线智能优化
   - 个性化出行建议
+  - 行程导出功能（PDF/日历格式）
+  - 系统集成测试
+  - 性能优化与部署上线
 - **技术重点**：
   - 推荐算法设计与实现
-  - 机器学习模型集成
-  - 实时数据分析与处理
-
-### 12.2 第五阶段：项目收尾与部署
-
-- **开发时间**：2026年6月1日 - 2026年6月30日
-- **核心功能**：
-  - 系统集成测试
-  - 性能优化
-  - 部署上线
-- **技术重点**：
+  - 数据分析与可视化
   - 系统性能测试与优化
   - 安全漏洞扫描
   - 容器化部署
@@ -1113,6 +1249,6 @@ GET /api/weather/hourly?lat=39.918&lon=116.397
 
 **文档编制人**：AI Assistant
 **审核人**：待定
-**版本**：V3.0
+**版本**：V4.0
 **创建日期**：2026年4月26日
-**最后更新**：2026年4月27日
+**最后更新**：2026年4月28日

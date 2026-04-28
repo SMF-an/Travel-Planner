@@ -134,22 +134,17 @@
         </div>
         
         <div class="section">
-          <h3 class="section-title">已选择的地点</h3>
-          <div v-if="locationStore.locations.length > 0" class="locations-list">
-            <div 
-              v-for="(location, index) in locationStore.locations" 
-              :key="location.id" 
-              class="location-item"
-            >
-              <div class="location-index">{{ index + 1 }}</div>
-              <div class="location-info">
-                <div class="location-name">{{ location.location.name }}</div>
-                <div class="location-address">{{ location.location.address }}</div>
-                <div v-if="location.notes" class="location-notes">{{ location.notes }}</div>
-              </div>
-            </div>
-          </div>
-          <div v-else class="empty-text">暂无选择的地点</div>
+          <TripTimeline
+            :items="scheduledLocations"
+            :weather-by-location-id="weatherByLocationId"
+            :loading="timelineLoading"
+            :loading-more="timelineLoadingMore"
+            :has-more="timelineHasMore"
+            :error="timelineError"
+            :page-size="10"
+            @load-more="handleLoadMore"
+            @retry="loadTimeline"
+          />
         </div>
         
         <p class="updated-at">最后更新时间：{{ formatDateTime(store.currentPlan.updated_at) }}</p>
@@ -181,11 +176,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, h } from 'vue';
+import { ref, computed, onMounted, h } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useTravelPlanStore } from '../stores/travelPlan';
 import { useLocationStore } from '../stores/location';
+import { useWeatherStore } from '../stores/weather';
 import { NCard, NButton, NSpin, NEmpty, NTag, NIcon } from 'naive-ui';
+import TripTimeline from '../components/TripTimeline.vue';
 
 // 图标组件
 const EditIcon = {
@@ -233,8 +230,67 @@ const router = useRouter();
 const route = useRoute();
 const store = useTravelPlanStore();
 const locationStore = useLocationStore();
+const weatherStore = useWeatherStore();
 
 const planId = route.params.id;
+
+const timelineLoading = ref(false);
+const timelineLoadingMore = ref(false);
+const timelineHasMore = ref(false);
+const timelineError = ref(null);
+const weatherByLocationId = ref({});
+
+const scheduledLocations = computed(() => {
+  return locationStore.locations
+    .filter(loc => loc.visit_date && loc.visit_time_slot)
+    .sort((a, b) => {
+      const dateCompare = a.visit_date.localeCompare(b.visit_date);
+      if (dateCompare !== 0) return dateCompare;
+      const slotOrder = { '上午': 0, '下午': 1, '晚上': 2 };
+      return (slotOrder[a.visit_time_slot] || 0) - (slotOrder[b.visit_time_slot] || 0);
+    });
+});
+
+const loadTimeline = async () => {
+  timelineLoading.value = true;
+  timelineError.value = null;
+  try {
+    await locationStore.fetchPlanLocations(planId);
+    await loadTimelineWeather();
+    timelineHasMore.value = scheduledLocations.value.length > 10;
+  } catch (err) {
+    timelineError.value = '加载行程失败，请重试';
+    console.error('Timeline load error:', err);
+  } finally {
+    timelineLoading.value = false;
+  }
+};
+
+const handleLoadMore = () => {
+  if (timelineLoadingMore.value) return;
+  timelineLoadingMore.value = true;
+  setTimeout(() => {
+    timelineHasMore.value = false;
+    timelineLoadingMore.value = false;
+  }, 500);
+};
+
+const loadTimelineWeather = async () => {
+  const nextWeatherMap = {};
+  const jobs = scheduledLocations.value.map(async (item) => {
+    const lat = item?.location?.latitude;
+    const lon = item?.location?.longitude;
+    if (lat == null || lon == null) return;
+    try {
+      const weatherData = await weatherStore.fetchWeatherData(lat, lon);
+      nextWeatherMap[item.id] = weatherData;
+    } catch (error) {
+      console.error('Load timeline weather failed:', item.id, error);
+    }
+  });
+  await Promise.allSettled(jobs);
+  weatherByLocationId.value = nextWeatherMap;
+};
 
 // 格式化日期
 const formatDate = (dateString) => {
@@ -294,7 +350,7 @@ const handleDelete = async () => {
 // 加载规划详情和地点
 onMounted(async () => {
   await store.fetchPlan(planId);
-  await locationStore.fetchPlanLocations(planId);
+  await loadTimeline();
 });
 </script>
 

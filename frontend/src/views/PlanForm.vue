@@ -186,6 +186,39 @@
           </n-button>
           <n-button
             type="primary"
+            @click="handleNextStep"
+            size="large"
+            class="action-button primary-button"
+          >
+            下一步
+          </n-button>
+        </div>
+      </n-card>
+    </div>
+
+    <div v-else-if="currentStep === 4" class="step-schedule">
+      <n-card
+        class="form-card"
+        :bordered="false"
+        size="large"
+      >
+        <SchedulePlanner
+          :plan-id="createdPlanId"
+          :start-date="formData.start_date"
+          :end-date="formData.end_date"
+        />
+
+        <div class="form-actions">
+          <n-button
+            type="default"
+            @click="handleBackStep"
+            size="large"
+            class="action-button"
+          >
+            上一步
+          </n-button>
+          <n-button
+            type="primary"
             @click="handleComplete"
             size="large"
             class="action-button primary-button"
@@ -206,6 +239,7 @@ import { useLocationStore } from '../stores/location';
 import { NCard, NForm, NFormItem, NInput, NInputNumber, NDatePicker, NSelect, NButton, NIcon } from 'naive-ui';
 import LocationSelector from '../components/LocationSelector.vue';
 import MultiLocationWeather from '../components/MultiLocationWeather.vue';
+import SchedulePlanner from '../components/SchedulePlanner.vue';
 
 const SaveIcon = {
   render() {
@@ -367,12 +401,20 @@ const handleNextStep = async () => {
       alert('操作失败，请重试');
     }
   } else if (currentStep.value === 2) {
+    if (locationStore.locations.length === 0) {
+      alert('请至少选择一个地点');
+      return;
+    }
     currentStep.value = 3;
+  } else if (currentStep.value === 3) {
+    currentStep.value = 4;
   }
 };
 
 const handleBackStep = () => {
-  if (currentStep.value === 3) {
+  if (currentStep.value === 4) {
+    currentStep.value = 3;
+  } else if (currentStep.value === 3) {
     currentStep.value = 2;
   } else if (currentStep.value === 2) {
     currentStep.value = 1;
@@ -428,6 +470,10 @@ onMounted(async () => {
 }
 
 .step-weather {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.step-schedule {
   animation: fadeIn 0.3s ease-out;
 }
 

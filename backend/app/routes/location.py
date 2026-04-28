@@ -41,8 +41,10 @@ def get_plan_locations(plan_id: int):
             ),
             order_index=pl.order_index,
             visit_date=pl.visit_date,
+            visit_time_slot=pl.visit_time_slot,
             notes=pl.notes,
-            created_at=pl.created_at
+            created_at=pl.created_at,
+            updated_at=pl.updated_at
         ))
     return result
 
@@ -83,8 +85,10 @@ def add_location_to_plan(plan_id: int, location_data: LocationCreate):
         ),
         order_index=plan_location.order_index,
         visit_date=plan_location.visit_date,
+        visit_time_slot=plan_location.visit_time_slot,
         notes=plan_location.notes,
-        created_at=plan_location.created_at
+        created_at=plan_location.created_at,
+        updated_at=plan_location.updated_at
     )
 
 @router.put("/plan-locations/{plan_location_id}", response_model=PlanLocationResponse)
@@ -94,12 +98,19 @@ def update_plan_location(plan_location_id: int, update_data: PlanLocationUpdate)
     except PlanLocation.DoesNotExist:
         raise HTTPException(status_code=404, detail="规划地点不存在")
 
+    time_slots = ['上午', '下午', '晚上']
+    if update_data.visit_time_slot is not None and update_data.visit_time_slot not in time_slots:
+        raise HTTPException(status_code=400, detail="时间段只能是：上午、下午、晚上")
+
     if update_data.order_index is not None:
         plan_location.order_index = update_data.order_index
     if update_data.visit_date is not None:
         plan_location.visit_date = update_data.visit_date
+    if update_data.visit_time_slot is not None:
+        plan_location.visit_time_slot = update_data.visit_time_slot
     if update_data.notes is not None:
         plan_location.notes = update_data.notes
+    plan_location.updated_at = datetime.now()
 
     plan_location.save()
 
@@ -118,8 +129,10 @@ def update_plan_location(plan_location_id: int, update_data: PlanLocationUpdate)
         ),
         order_index=plan_location.order_index,
         visit_date=plan_location.visit_date,
+        visit_time_slot=plan_location.visit_time_slot,
         notes=plan_location.notes,
-        created_at=plan_location.created_at
+        created_at=plan_location.created_at,
+        updated_at=plan_location.updated_at
     )
 
 @router.delete("/plan-locations/{plan_location_id}")

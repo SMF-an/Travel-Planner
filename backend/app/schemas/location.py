@@ -40,6 +40,7 @@ class PlanLocationCreate(PlanLocationBase):
 class PlanLocationUpdate(BaseModel):
     order_index: Optional[int] = None
     visit_date: Optional[str] = None
+    visit_time_slot: Optional[str] = None
     notes: Optional[str] = Field(None, max_length=500)
 
 class PlanLocationResponse(BaseModel):
@@ -48,8 +49,10 @@ class PlanLocationResponse(BaseModel):
     location: LocationResponse
     order_index: int
     visit_date: Optional[str] = None
+    visit_time_slot: Optional[str] = None
     notes: Optional[str] = None
     created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True

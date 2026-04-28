@@ -21,8 +21,10 @@ class PlanLocation(Model):
     plan_id = IntegerField(null=False)
     order_index = IntegerField(default=0)
     visit_date = CharField(max_length=50, null=True)
+    visit_time_slot = CharField(max_length=20, null=True)  # 上午、下午、晚上
     notes = CharField(max_length=500, null=True)
     created_at = DateTimeField(default=datetime.now)
+    updated_at = DateTimeField(default=datetime.now)
 
     class Meta:
         database = db
