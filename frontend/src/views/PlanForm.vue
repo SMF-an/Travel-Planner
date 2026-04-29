@@ -219,14 +219,25 @@
           </n-button>
           <n-button
             type="primary"
-            @click="handleComplete"
+            @click="handleNextStep"
             size="large"
             class="action-button primary-button"
           >
-            完成
+            生成AI建议
           </n-button>
         </div>
       </n-card>
+    </div>
+
+    <div v-else-if="currentStep === 5" class="step-summary">
+      <AiSummary
+        :plan-id="createdPlanId"
+        :plan-data="formData"
+        :locations="locationStore.locations"
+        :weather="weatherStore.weatherData"
+        @back="handleBackStep"
+        @complete="handleComplete"
+      />
     </div>
   </div>
 </template>
@@ -236,10 +247,12 @@ import { ref, reactive, computed, onMounted, nextTick, h } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useTravelPlanStore } from '../stores/travelPlan';
 import { useLocationStore } from '../stores/location';
+import { useWeatherStore } from '../stores/weather';
 import { NCard, NForm, NFormItem, NInput, NInputNumber, NDatePicker, NSelect, NButton, NIcon } from 'naive-ui';
 import LocationSelector from '../components/LocationSelector.vue';
 import MultiLocationWeather from '../components/MultiLocationWeather.vue';
 import SchedulePlanner from '../components/SchedulePlanner.vue';
+import AiSummary from '../components/AiSummary.vue';
 
 const SaveIcon = {
   render() {
@@ -265,6 +278,7 @@ const router = useRouter();
 const route = useRoute();
 const store = useTravelPlanStore();
 const locationStore = useLocationStore();
+const weatherStore = useWeatherStore();
 const formRef = ref(null);
 
 const currentStep = ref(1);
@@ -408,11 +422,15 @@ const handleNextStep = async () => {
     currentStep.value = 3;
   } else if (currentStep.value === 3) {
     currentStep.value = 4;
+  } else if (currentStep.value === 4) {
+    currentStep.value = 5;
   }
 };
 
 const handleBackStep = () => {
-  if (currentStep.value === 4) {
+  if (currentStep.value === 5) {
+    currentStep.value = 4;
+  } else if (currentStep.value === 4) {
     currentStep.value = 3;
   } else if (currentStep.value === 3) {
     currentStep.value = 2;
@@ -477,7 +495,9 @@ onMounted(async () => {
   animation: fadeIn 0.3s ease-out;
 }
 
-
+.step-summary {
+  animation: fadeIn 0.3s ease-out;
+}
 
 @keyframes fadeIn {
   from {

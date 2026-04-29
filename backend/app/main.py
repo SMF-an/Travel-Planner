@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import travel_plan, location, weather
+from app.routes import travel_plan, location, weather, ai_summary
 
 app = FastAPI(
     title="Travel Planner API",
@@ -19,6 +19,7 @@ app.add_middleware(
 app.include_router(travel_plan.router, prefix="/api", tags=["travel_plans"])
 app.include_router(location.router, prefix="/api", tags=["locations"])
 app.include_router(weather.router, prefix="/api", tags=["weather"])
+app.include_router(ai_summary.router, prefix="/api", tags=["ai_summary"])
 
 # 根路径
 @app.get("/")
