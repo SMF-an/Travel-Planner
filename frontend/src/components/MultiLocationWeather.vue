@@ -124,6 +124,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useWeatherStore } from '../stores/weather';
+import { formatPlainDateKey, formatPlainDateWithWeekday, parsePlainDate } from '../utils/date';
 import { NSelect } from 'naive-ui';
 
 const props = defineProps({
@@ -149,11 +150,15 @@ const selectedDate = ref('');
 // 计算行程日期范围
 const travelDates = computed(() => {
   const dates = [];
-  const start = new Date(props.startDate);
-  const end = new Date(props.endDate);
+  const start = parsePlainDate(props.startDate);
+  const end = parsePlainDate(props.endDate);
+
+  if (!start || !end) {
+    return dates;
+  }
   
   for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    dates.push(d.toISOString().split('T')[0]);
+    dates.push(formatPlainDateKey(d));
   }
   
   return dates;
@@ -193,20 +198,25 @@ watch(
 
 // 格式化显示日期
 const formatDisplayDate = (dateString) => {
-  const date = new Date(dateString);
+  const date = parsePlainDate(dateString);
+  if (!date) {
+    return '';
+  }
+
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  if (date.toDateString() === today.toDateString()) {
+  const todayKey = formatPlainDateKey(today);
+  const tomorrowKey = formatPlainDateKey(tomorrow);
+  const currentKey = formatPlainDateKey(date);
+
+  if (currentKey === todayKey) {
     return '今天';
-  } else if (date.toDateString() === tomorrow.toDateString()) {
+  } else if (currentKey === tomorrowKey) {
     return '明天';
   } else {
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    return `${month}月${day}日 ${weekDays[date.getDay()]}`;
+    return formatPlainDateWithWeekday(dateString);
   }
 };
 

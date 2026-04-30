@@ -196,6 +196,7 @@
 <script setup>
 import { ref, computed, h } from 'vue';
 import { NFormItem, NInput, NButton, NIcon, NModal } from 'naive-ui';
+import { formatPlainDateKey, formatPlainDateParts, formatPlainDateWithWeekday, parsePlainDate } from '../utils/date';
 import { useLocationStore } from '../stores/location';
 import { useWeatherStore } from '../stores/weather';
 
@@ -422,16 +423,20 @@ const planLocations = computed(() => locationStore.locations);
 
 const availableDates = computed(() => {
   const dates = [];
-  const start = new Date(props.startDate);
-  const end = new Date(props.endDate);
-  const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+  const start = parsePlainDate(props.startDate);
+  const end = parsePlainDate(props.endDate);
+
+  if (!start || !end) {
+    return dates;
+  }
 
   while (start <= end) {
-    const dateStr = start.toISOString().split('T')[0];
+    const dateStr = formatPlainDateKey(start);
+    const parts = formatPlainDateParts(start);
     dates.push({
       dateStr,
-      day: start.getDate(),
-      weekday: `周${weekdays[start.getDay()]}`
+      day: parts.day,
+      weekday: parts.weekday
     });
     start.setDate(start.getDate() + 1);
   }
@@ -566,9 +571,7 @@ const getLocationsByTimeSlot = (date) => {
 };
 
 const formatDateForPreview = (dateStr) => {
-  const date = new Date(dateStr);
-  const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-  return `${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}`;
+  return formatPlainDateWithWeekday(dateStr);
 };
 
 const allLocationsScheduled = computed(() => {

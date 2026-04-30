@@ -333,6 +333,12 @@ const preferenceOptions = [
   { label: '休闲放松', value: '休闲放松' }
 ];
 
+const resetLocationSelectionState = () => {
+  locationStore.clearLocations();
+  locationStore.clearSelectedLocation();
+  locationStore.clearSearchResults();
+};
+
 const formData = reactive({
   title: '',
   description: '',
@@ -371,6 +377,7 @@ const validateFormData = () => {
 };
 
 const handleCancel = () => {
+  resetLocationSelectionState();
   router.push({ name: 'PlanList' });
 };
 
@@ -409,6 +416,10 @@ const handleNextStep = async () => {
         localStorage.removeItem('planDraft');
       }
 
+      if (!isEdit.value) {
+        resetLocationSelectionState();
+      }
+
       createdPlanId.value = result.id;
       currentStep.value = 2;
     } catch (err) {
@@ -440,6 +451,7 @@ const handleBackStep = () => {
 };
 
 const handleComplete = () => {
+  resetLocationSelectionState();
   router.push({ name: 'PlanDetail', params: { id: createdPlanId.value } });
 };
 
@@ -457,6 +469,7 @@ onMounted(async () => {
       });
     }
   } else {
+    resetLocationSelectionState();
     const draft = localStorage.getItem('planDraft');
     if (draft) {
       try {

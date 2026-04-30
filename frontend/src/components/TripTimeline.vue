@@ -136,6 +136,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { h } from 'vue';
+import { formatPlainDateParts } from '../utils/date';
 import {
   NIcon,
   NSpin,
@@ -190,20 +191,17 @@ const scheduledCount = computed(() => props.items.length);
 
 const formatMonth = (dateStr) => {
   if (!dateStr) return '';
-  const date = new Date(dateStr);
-  return `${date.getMonth() + 1}月`;
+  return formatPlainDateParts(dateStr).month;
 };
 
 const formatDay = (dateStr) => {
   if (!dateStr) return '';
-  const date = new Date(dateStr);
-  return date.getDate();
+  return formatPlainDateParts(dateStr).day;
 };
 
 const formatWeekday = (dateStr) => {
   if (!dateStr) return '';
-  const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-  return weekdays[new Date(dateStr).getDay()];
+  return formatPlainDateParts(dateStr).weekday;
 };
 
 const getTimeSlotClass = (slot) => {

@@ -93,6 +93,7 @@
 <script setup>
 import { watch, ref } from 'vue';
 import { useWeatherStore } from '../stores/weather';
+import { parsePlainDate } from '../utils/date';
 
 const props = defineProps({
   lat: {
@@ -119,7 +120,11 @@ const fetchWeather = async () => {
 };
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
+  const date = parsePlainDate(dateString);
+  if (!date) {
+    return '';
+  }
+
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);

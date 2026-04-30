@@ -152,6 +152,7 @@
 import { ref, computed, onMounted, h } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTravelPlanStore } from '../stores/travelPlan';
+import { formatPlainDate } from '../utils/date';
 import { NCard, NButton, NInput, NSpin, NEmpty, NTag, NIcon } from 'naive-ui';
 
 // 图标组件
@@ -284,7 +285,7 @@ const handleSearch = () => {
 
 // 格式化日期
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('zh-CN');
+  return formatPlainDate(dateString);
 };
 
 // 获取状态文本

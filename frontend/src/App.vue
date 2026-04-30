@@ -1,33 +1,35 @@
 <template>
   <div class="app">
-    <n-layout>
-      <n-layout-header class="header">
-        <div class="header-content">
-          <div class="logo-section">
-            <div class="logo-wrapper">
-              <n-icon class="logo" :component="TravelIcon" />
+    <n-message-provider>
+      <n-layout>
+        <n-layout-header class="header">
+          <div class="header-content">
+            <div class="logo-section">
+              <div class="logo-wrapper">
+                <n-icon class="logo" :component="TravelIcon" />
+              </div>
+              <h1 class="title">智能出行规划器</h1>
             </div>
-            <h1 class="title">智能出行规划器</h1>
           </div>
-        </div>
-      </n-layout-header>
-      <n-layout-content class="content">
-        <div class="container">
-          <router-view v-slot="{ Component }">
-            <transition name="slide-fade" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
-        </div>
-      </n-layout-content>
-    </n-layout>
+        </n-layout-header>
+        <n-layout-content class="content">
+          <div class="container">
+            <router-view v-slot="{ Component }">
+              <transition name="slide-fade" mode="out-in">
+                <component :is="Component" />
+              </transition>
+            </router-view>
+          </div>
+        </n-layout-content>
+      </n-layout>
+    </n-message-provider>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch, h } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { NLayout, NLayoutHeader, NLayoutContent, NIcon } from 'naive-ui';
+import { NLayout, NLayoutHeader, NLayoutContent, NIcon, NMessageProvider } from 'naive-ui';
 
 // 旅行图标
 const TravelIcon = {

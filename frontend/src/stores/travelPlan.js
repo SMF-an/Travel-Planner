@@ -36,6 +36,7 @@ export const useTravelPlanStore = defineStore('travelPlan', {
     async fetchPlan(id) {
       this.loading = true;
       this.error = null;
+      this.currentPlan = null;
       try {
         const response = await travelPlanApi.getPlan(id);
         this.currentPlan = response.data;

@@ -19,28 +19,60 @@
             </n-tag>
           </div>
           <div class="header-actions" v-if="store.currentPlan">
-            <n-button 
-              type="primary" 
-              @click="navigateToEdit"
-              size="small"
-              class="action-button"
-            >
-              <template #icon>
-                <n-icon :component="EditIcon" />
-              </template>
-              编辑
-            </n-button>
-            <n-button 
-              type="error" 
-              @click="handleDelete"
-              size="small"
-              class="action-button"
-            >
-              <template #icon>
-                <n-icon :component="DeleteIcon" />
-              </template>
-              删除
-            </n-button>
+            <n-space :size="12">
+              <div class="export-section">
+                <n-button
+                  type="primary"
+                  @click="toggleExportPopover"
+                  size="small"
+                  class="action-button export-button"
+                  :loading="exportLoading"
+                  :disabled="exportLoading"
+                  ref="exportBtnRef"
+                >
+                  <template #icon>
+                    <n-icon :component="DownloadIcon" />
+                  </template>
+                  导出行程单
+                </n-button>
+                <div v-if="showExportPopover" ref="exportPopoverRef" class="export-popover">
+                  <n-button size="small" class="export-pop-btn" @click="selectExportFormat('markdown')">
+                    <div class="export-pop-inner">
+                      <n-icon :component="FileTextIcon" />
+                      <span class="export-pop-label">Markdown</span>
+                    </div>
+                  </n-button>
+                  <n-button size="small" class="export-pop-btn" @click="selectExportFormat('pdf')">
+                    <div class="export-pop-inner">
+                      <n-icon :component="FilePdfIcon" />
+                      <span class="export-pop-label">PDF</span>
+                    </div>
+                  </n-button>
+                </div>
+              </div>
+              <n-button 
+                type="primary" 
+                @click="navigateToEdit"
+                size="small"
+                class="action-button"
+              >
+                <template #icon>
+                  <n-icon :component="EditIcon" />
+                </template>
+                编辑
+              </n-button>
+              <n-button 
+                type="error" 
+                @click="handleDelete"
+                size="small"
+                class="action-button"
+              >
+                <template #icon>
+                  <n-icon :component="DeleteIcon" />
+                </template>
+                删除
+              </n-button>
+            </n-space>
           </div>
         </div>
       </template>
@@ -50,6 +82,28 @@
           <span>加载中...</span>
         </template>
       </n-spin>
+      
+      <n-result 
+        v-else-if="store.error" 
+        class="error-container"
+        status="error"
+        title="加载失败"
+        :description="store.error"
+      >
+        <template #footer>
+          <n-space justify="center">
+            <n-button type="primary" @click="handleRetry">
+              <template #icon>
+                <n-icon :component="RefreshIcon" />
+              </template>
+              重试
+            </n-button>
+            <n-button @click="navigateToList">
+              返回列表
+            </n-button>
+          </n-space>
+        </template>
+      </n-result>
       
       <div v-else-if="store.currentPlan" class="detail-content">
         <div class="info-grid">
@@ -176,13 +230,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, h } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch, h } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useTravelPlanStore } from '../stores/travelPlan';
 import { useLocationStore } from '../stores/location';
 import { useWeatherStore } from '../stores/weather';
-import { NCard, NButton, NSpin, NEmpty, NTag, NIcon } from 'naive-ui';
+import { formatPlainDate } from '../utils/date';
+import { NCard, NButton, NSpin, NEmpty, NTag, NIcon, NSpace, NResult } from 'naive-ui';
+import { useMessage } from 'naive-ui';
 import TripTimeline from '../components/TripTimeline.vue';
+import { exportUtils } from '../utils/exportUtils';
 
 // 图标组件
 const EditIcon = {
@@ -226,19 +283,113 @@ const DeleteIcon = {
   }
 };
 
+const DownloadIcon = {
+  render() {
+    return h('svg', {
+      xmlns: 'http://www.w3.org/2000/svg',
+      width: '18',
+      height: '18',
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      strokeWidth: '2',
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      h('path', { d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' }),
+      h('polyline', { points: '7 10 12 15 17 10' }),
+      h('line', { x1: '12', y1: '15', x2: '12', y2: '3' })
+    ]);
+  }
+};
+
+const RefreshIcon = {
+  render() {
+    return h('svg', {
+      xmlns: 'http://www.w3.org/2000/svg',
+      width: '18',
+      height: '18',
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      strokeWidth: '2',
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      h('polyline', { points: '23 4 23 10 17 10' }),
+      h('polyline', { points: '1 20 1 14 7 14' }),
+      h('path', { d: 'M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15' })
+    ]);
+  }
+};
+
 const router = useRouter();
 const route = useRoute();
 const store = useTravelPlanStore();
 const locationStore = useLocationStore();
 const weatherStore = useWeatherStore();
+const NMessage = useMessage();
 
-const planId = route.params.id;
+const planId = computed(() => Number(route.params.id));
+
+const getPlanId = () => {
+  return Number(planId.value);
+};
 
 const timelineLoading = ref(false);
 const timelineLoadingMore = ref(false);
 const timelineHasMore = ref(false);
 const timelineError = ref(null);
 const weatherByLocationId = ref({});
+
+// 导出相关
+const exportLoading = ref(false);
+const showExportPopover = ref(false);
+const exportBtnRef = ref(null);
+const exportPopoverRef = ref(null);
+
+const onDocumentKeydown = (event) => {
+  if (event.key === 'Escape') {
+    showExportPopover.value = false;
+  }
+};
+
+const onDocumentClick = (event) => {
+  if (!showExportPopover.value) return;
+
+  const popover = exportPopoverRef.value;
+  const button = exportBtnRef.value;
+  const target = event.target;
+
+  if (popover && (popover === target || (popover.contains && popover.contains(target)))) {
+    return;
+  }
+
+  if (button && (button === target || (button.$el && button.$el.contains && button.$el.contains(target)) || (button.contains && button.contains(target)))) {
+    return;
+  }
+
+  showExportPopover.value = false;
+};
+
+const toggleExportPopover = () => {
+  showExportPopover.value = !showExportPopover.value;
+};
+
+watch(showExportPopover, (visible) => {
+  if (visible) {
+    document.addEventListener('click', onDocumentClick);
+    document.addEventListener('keydown', onDocumentKeydown);
+  } else {
+    document.removeEventListener('click', onDocumentClick);
+    document.removeEventListener('keydown', onDocumentKeydown);
+  }
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onDocumentClick);
+  document.removeEventListener('keydown', onDocumentKeydown);
+});
 
 const scheduledLocations = computed(() => {
   return locationStore.locations
@@ -255,7 +406,7 @@ const loadTimeline = async () => {
   timelineLoading.value = true;
   timelineError.value = null;
   try {
-    await locationStore.fetchPlanLocations(planId);
+    await locationStore.fetchPlanLocations(getPlanId());
     await loadTimelineWeather();
     timelineHasMore.value = scheduledLocations.value.length > 10;
   } catch (err) {
@@ -294,7 +445,7 @@ const loadTimelineWeather = async () => {
 
 // 格式化日期
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString();
+  return formatPlainDate(dateString);
 };
 
 // 格式化日期时间
@@ -326,7 +477,7 @@ const getStatusType = (status) => {
 
 // 导航到编辑页面
 const navigateToEdit = () => {
-  router.push({ name: 'PlanEdit', params: { id: planId } });
+  router.push({ name: 'PlanEdit', params: { id: getPlanId() } });
 };
 
 // 导航到列表页面
@@ -338,7 +489,7 @@ const navigateToList = () => {
 const handleDelete = async () => {
   if (confirm('确定要删除这个规划吗？')) {
     try {
-      await store.deletePlan(planId);
+      await store.deletePlan(getPlanId());
       alert('删除成功');
       router.push({ name: 'PlanList' });
     } catch (err) {
@@ -347,9 +498,58 @@ const handleDelete = async () => {
   }
 };
 
+// 重试加载
+const handleRetry = async () => {
+  await store.fetchPlan(getPlanId());
+  if (store.currentPlan) {
+    await loadTimeline();
+  }
+};
+
+// 导出行程单
+const handleExport = async (format) => {
+  if (!store.currentPlan) {
+    NMessage.error('没有可导出的规划数据');
+    return;
+  }
+
+  exportLoading.value = true;
+  NMessage.info('正在导出，请稍候...');
+
+  try {
+    const planData = store.currentPlan;
+    const locations = locationStore.locations;
+
+    if (format === 'markdown') {
+      const result = await exportUtils.downloadTripMarkdown(planData, locations);
+      NMessage.success(`导出成功！文件已保存到浏览器下载目录`);
+      console.log('Markdown导出成功:', result);
+    } else if (format === 'pdf') {
+      const result = await exportUtils.downloadTripPdf(planData, locations);
+      NMessage.success(`导出成功！文件已保存到浏览器下载目录`);
+      console.log('PDF导出成功:', result);
+    }
+  } catch (error) {
+    console.error('导出失败:', error);
+    NMessage.error(`导出失败：${error.message || '未知错误'}`);
+  } finally {
+    exportLoading.value = false;
+  }
+};
+
+const selectExportFormat = async (format) => {
+  showExportPopover.value = false;
+  await handleExport(format);
+};
+
 // 加载规划详情和地点
 onMounted(async () => {
-  await store.fetchPlan(planId);
+  if (Number.isNaN(getPlanId())) {
+    store.error = '规划不存在';
+    return;
+  }
+
+  await store.fetchPlan(getPlanId());
   await loadTimeline();
 });
 </script>
@@ -430,11 +630,91 @@ onMounted(async () => {
   box-shadow: var(--shadow-hover);
 }
 
+.export-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.export-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+}
+
+.export-button:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.export-popover {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px;
+  background: transparent;
+  z-index: 40;
+}
+
+.export-pop-btn {
+  min-width: 140px;
+  height: 40px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 12px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: none;
+  cursor: pointer;
+  gap: 10px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.export-pop-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.export-pop-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.export-pop-btn :deep(.n-icon) {
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.export-pop-label {
+  font-size: 13px;
+  color: var(--color-text);
+  font-weight: 600;
+  line-height: 1;
+}
+
 .loading-container {
   min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.error-container {
+  padding: 60px 0;
+}
+
+@media (max-width: 768px) {
+  .export-popover {
+    display: none;
+  }
 }
 
 .detail-content {
