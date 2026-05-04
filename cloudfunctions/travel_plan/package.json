@@ -1,0 +1,11 @@
+{
+  "name": "travel_plan",
+  "version": "1.0.0",
+  "description": "Travel Planner - Plan Management Cloud Function",
+  "dependencies": {
+    "@cloudbase/node-sdk": "^3.18.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

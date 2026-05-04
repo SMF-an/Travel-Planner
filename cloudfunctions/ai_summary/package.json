@@ -1,0 +1,11 @@
+{
+  "name": "ai_summary",
+  "version": "1.0.0",
+  "description": "Travel Planner - AI Summary Cloud Function",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

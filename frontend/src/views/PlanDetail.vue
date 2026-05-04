@@ -330,10 +330,10 @@ const locationStore = useLocationStore();
 const weatherStore = useWeatherStore();
 const NMessage = useMessage();
 
-const planId = computed(() => Number(route.params.id));
+const planId = computed(() => route.params.id);
 
 const getPlanId = () => {
-  return Number(planId.value);
+  return planId.value;
 };
 
 const timelineLoading = ref(false);
@@ -544,7 +544,7 @@ const selectExportFormat = async (format) => {
 
 // 加载规划详情和地点
 onMounted(async () => {
-  if (Number.isNaN(getPlanId())) {
+  if (!getPlanId()) {
     store.error = '规划不存在';
     return;
   }

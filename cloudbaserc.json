@@ -1,0 +1,52 @@
+{
+  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
+  "envId": "personal-d8ge1nis6551fced9",
+  "functionRoot": "cloudfunctions",
+  "functions": [
+    {
+      "name": "travel_plan",
+      "timeout": 30,
+      "memorySize": 256,
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "description": "Travel Planner - Plan Management Cloud Function",
+      "envVariables": {},
+      "webFunctionConfig": {
+        "path": "/api",
+        "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "enableCORS": true,
+        "isIntegrated": true
+      }
+    },
+    {
+      "name": "weather",
+      "timeout": 30,
+      "memorySize": 256,
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "description": "Travel Planner - Weather Service Cloud Function",
+      "envVariables": {},
+      "webFunctionConfig": {
+        "path": "/api/weather",
+        "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "enableCORS": true,
+        "isIntegrated": true
+      }
+    },
+    {
+      "name": "ai_summary",
+      "timeout": 60,
+      "memorySize": 512,
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "description": "Travel Planner - AI Summary Cloud Function",
+      "envVariables": {},
+      "webFunctionConfig": {
+        "path": "/api/plans/summary",
+        "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "enableCORS": true,
+        "isIntegrated": true
+      }
+    }
+  ]
+}

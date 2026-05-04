@@ -1,19 +1,15 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000/api';
+const CLOUDBASE_API = 'https://personal-d8ge1nis6551fced9.service.tcloudbase.com/api';
 
 export const locationApi = {
-  getPlanLocations: (planId) => axios.get(`${BASE_URL}/plans/${planId}/locations`),
+  getPlanLocations: (planId) => axios.get(`${CLOUDBASE_API}/plans/${planId}/locations`),
 
-  addLocationToPlan: (planId, locationData) => axios.post(`${BASE_URL}/plans/${planId}/locations`, locationData),
+  addLocationToPlan: (planId, locationData) => axios.post(`${CLOUDBASE_API}/plans/${planId}/locations`, locationData),
 
-  updatePlanLocation: (planLocationId, updateData) => axios.put(`${BASE_URL}/plan-locations/${planLocationId}`, updateData),
+  updatePlanLocation: (planLocationId, updateData) => axios.put(`${CLOUDBASE_API}/plan-locations/${planLocationId}`, updateData),
 
-  deletePlanLocation: (planLocationId) => axios.delete(`${BASE_URL}/plan-locations/${planLocationId}`),
+  deletePlanLocation: (planLocationId) => axios.delete(`${CLOUDBASE_API}/plan-locations/${planLocationId}`),
 
-  reorderLocations: (planId, locationIds) => axios.put(`${BASE_URL}/plans/${planId}/locations/reorder`, locationIds),
-
-  searchLocations: (keywords) => axios.get(`${BASE_URL}/locations/search`, { params: { keywords } }),
-
-  geocode: (address) => axios.get(`${BASE_URL}/geocode`, { params: { address } })
+  reorderLocations: (planId, locationIds) => axios.put(`${CLOUDBASE_API}/plans/${planId}/locations/reorder`, locationIds)
 };

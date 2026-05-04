@@ -1,0 +1,29 @@
+{
+  "domain": "personal-d8ge1nis6551fced9.preview.cloudbase.net",
+  "routes": [
+    {
+      "path": "/api/plans",
+      "upstreamResourceType": "SCF",
+      "upstreamResourceName": "travel_plan",
+      "enable": true
+    },
+    {
+      "path": "/api/plan-locations",
+      "upstreamResourceType": "SCF",
+      "upstreamResourceName": "travel_plan",
+      "enable": true
+    },
+    {
+      "path": "/api/weather",
+      "upstreamResourceType": "SCF",
+      "upstreamResourceName": "weather",
+      "enable": true
+    },
+    {
+      "path": "/api/summary",
+      "upstreamResourceType": "SCF",
+      "upstreamResourceName": "ai_summary",
+      "enable": true
+    }
+  ]
+}
