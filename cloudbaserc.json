@@ -1,7 +1,14 @@
 {
-  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
   "envId": "personal-d8ge1nis6551fced9",
   "functionRoot": "cloudfunctions",
+  "app": {
+    "root": "./frontend",
+    "framework": "vite",
+    "installCommand": "npm install",
+    "buildCommand": "npm run build",
+    "outputDir": "dist",
+    "deployPath": "/"
+  },
   "functions": [
     {
       "name": "travel_plan",
@@ -14,7 +21,7 @@
       "webFunctionConfig": {
         "path": "/api",
         "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "enableCORS": true,
+        "enableCORS": false,
         "isIntegrated": true
       }
     },
@@ -29,7 +36,7 @@
       "webFunctionConfig": {
         "path": "/api/weather",
         "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "enableCORS": true,
+        "enableCORS": false,
         "isIntegrated": true
       }
     },
@@ -44,7 +51,7 @@
       "webFunctionConfig": {
         "path": "/api/plans/summary",
         "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "enableCORS": true,
+        "enableCORS": false,
         "isIntegrated": true
       }
     }

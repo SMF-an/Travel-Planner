@@ -1,15 +1,15 @@
 const axios = require('axios');
 
 const DEEPSEEK_CONFIG = {
-  API_KEY: 'sk-e1d8c86fe79a4ac7acfcf3c248497bcb',
   API_URL: 'https://api.deepseek.com/chat/completions',
   MODEL: 'deepseek-v4-flash',
-  API_TIMEOUT: 30000
+  API_TIMEOUT: 30000,
+  API_KEY: process.env.DEEPSEEK_API_KEY || ''
 };
 
 function corsHeaders() {
   return {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': 'https://personal-d8ge1nis6551fced9-1428309492.tcloudbaseapp.com',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
   };

@@ -25,7 +25,7 @@ let collectionsInitialized = false;
 
 function corsHeaders() {
   return {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': 'https://personal-d8ge1nis6551fced9-1428309492.tcloudbaseapp.com',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
   };

@@ -1,15 +1,15 @@
 const axios = require('axios');
 
 const WEATHER_CONFIG = {
-  API_KEY: '911096bc5cda485481d70301fba9db67',
   API_URL: 'https://devapi.qweather.com/v7/weather/now',
   HOURLY_URL: 'https://devapi.qweather.com/v7/weather/24h',
-  DAILY_URL: 'https://devapi.qweather.com/v7/weather/7d'
+  DAILY_URL: 'https://devapi.qweather.com/v7/weather/7d',
+  API_KEY: process.env.WEATHER_API_KEY || ''
 };
 
 function corsHeaders() {
   return {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': 'https://personal-d8ge1nis6551fced9-1428309492.tcloudbaseapp.com',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
   };
