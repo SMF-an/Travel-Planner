@@ -21,13 +21,13 @@ export const travelPlanApi = {
 
   deletePlan: (id) => api.delete(`/${id}`),
 
-  generateSummary: (planId, data) => axios.post(`${CLOUDBASE_API}/summary`, { ...data, plan_id: planId }),
+  generateSummary: (planId, data) => axios.post(`${CLOUDBASE_API}/plans/summary`, { ...data, plan_id: planId }),
 
   getSummaryInfo: (planId) => axios.get(`${CLOUDBASE_API}/plans/${planId}/summary`)
 };
 
 export const aiSummaryApi = {
-  generateSummary: (planId, data) => axios.post(`${CLOUDBASE_API}/summary`, { ...data, plan_id: planId }),
+  generateSummary: (planId, data) => axios.post(`${CLOUDBASE_API}/plans/summary`, { ...data, plan_id: planId }),
 
   getSummaryInfo: (planId) => axios.get(`${CLOUDBASE_API}/plans/${planId}/summary`)
 };

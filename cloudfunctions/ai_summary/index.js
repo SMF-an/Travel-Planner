@@ -1,17 +1,11 @@
-const axios = require('axios');
-
-const DEEPSEEK_CONFIG = {
-  API_URL: 'https://api.deepseek.com/chat/completions',
-  MODEL: 'deepseek-v4-flash',
-  API_TIMEOUT: 30000,
-  API_KEY: process.env.DEEPSEEK_API_KEY || ''
-};
+const cloudbase = require('@cloudbase/node-sdk');
 
 function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': 'https://personal-d8ge1nis6551fced9-1428309492.tcloudbaseapp.com',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Expose-Headers': 'Content-Type'
   };
 }
 
@@ -94,51 +88,6 @@ ${weatherInfo}
   return prompt;
 }
 
-async function callDeepseekApi(prompt, maxRetries = 2) {
-  const headers = {
-    'Authorization': `Bearer ${DEEPSEEK_CONFIG.API_KEY}`,
-    'Content-Type': 'application/json'
-  };
-
-  const payload = {
-    model: DEEPSEEK_CONFIG.MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
-    max_tokens: 2000,
-    stream: false
-  };
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      const response = await axios.post(
-        DEEPSEEK_CONFIG.API_URL,
-        payload,
-        { headers, timeout: DEEPSEEK_CONFIG.API_TIMEOUT }
-      );
-
-      const result = response.data;
-
-      if (result.choices && result.choices.length > 0) {
-        return {
-          success: true,
-          content: result.choices[0].message.content.trim(),
-          usage: result.usage || {}
-        };
-      } else {
-        return {
-          success: false,
-          error: 'API返回格式异常'
-        };
-      }
-    } catch (error) {
-      if (attempt === maxRetries) {
-        throw error;
-      }
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-  }
-}
-
 function analyzePlanRisks(planData) {
   const risks = [];
   const { budget_min, budget_max, locations, start_date, end_date, weather } = planData;
@@ -199,34 +148,53 @@ function analyzePlanRisks(planData) {
   return risks;
 }
 
-async function generateTravelSummary(planData) {
-  const prompt = buildPrompt(planData);
-
-  try {
-    const aiResult = await callDeepseekApi(prompt);
-
-    if (aiResult.success) {
-      return {
-        success: true,
-        summary: aiResult.content,
-        error: null,
-        usage: aiResult.usage
-      };
-    } else {
-      return {
-        success: false,
-        summary: null,
-        error: aiResult.error,
-        usage: {}
-      };
+async function generateSummaryContent(prompt) {
+  console.log('[ai_summary] Initializing CloudBase app');
+  
+  const app = cloudbase.init({
+    env: 'personal-d8ge1nis6551fced9'
+  });
+  
+  console.log('[ai_summary] Getting AI service');
+  
+  if (typeof app.ai === 'function') {
+    const ai = app.ai();
+    const model = ai.createModel('custom-deepseek');
+    
+    console.log('[ai_summary] Calling model.streamText');
+    
+    const result = await model.streamText({
+      model: 'deepseek-v4-flash',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 2000
+    });
+    
+    let content = '';
+    for await (const text of result.textStream) {
+      content += text;
     }
-  } catch (error) {
-    return {
-      success: false,
-      summary: null,
-      error: error.message,
-      usage: {}
-    };
+    
+    return content.trim();
+  } else {
+    // 降级方案
+    console.log('[ai_summary] Falling back to invokeExtension');
+    const result = await app.invokeExtension('CloudBaseAI', {
+      action: 'chat',
+      version: 'v1',
+      model: 'deepseek-v4-flash',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      maxTokens: 2000
+    });
+    
+    if (result && result.data) {
+      return result.data.trim();
+    } else if (result && result.choices && result.choices.length > 0) {
+      return result.choices[0].message.content.trim();
+    }
+    
+    throw new Error('AI服务返回格式异常');
   }
 }
 
@@ -249,29 +217,33 @@ exports.main = async (event, context) => {
           return errorResponse('缺少必要参数：title 和 destination', 400);
         }
 
-        const aiResult = await generateTravelSummary(body);
-        const localRisks = analyzePlanRisks(body);
-
-        if (aiResult.success) {
+        const prompt = buildPrompt(body);
+        const risks = analyzePlanRisks(body);
+        
+        try {
+          const summary = await generateSummaryContent(prompt);
+          
           return successResponse({
             success: true,
-            summary: aiResult.summary,
-            risks: localRisks,
+            summary: summary,
+            risks: risks,
             error: null,
-            usage: aiResult.usage
+            usage: {}
           });
-        } else {
+        } catch (error) {
+          console.error('[ai_summary] AI error:', error.message);
           return successResponse({
             success: false,
             summary: null,
-            risks: localRisks,
-            error: aiResult.error,
-            usage: aiResult.usage
+            risks: risks,
+            error: error.message,
+            usage: {}
           });
         }
       } else if (method === 'GET') {
         return successResponse({
-          message: 'AI总结服务正常运行，请使用POST请求提交规划数据生成总结'
+          message: 'AI总结服务正常运行，请使用POST请求提交规划数据生成总结',
+          streamSupport: false
         });
       }
     }

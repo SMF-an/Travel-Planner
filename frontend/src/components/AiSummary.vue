@@ -286,6 +286,7 @@ import { ref, computed, watch, h, onMounted, onBeforeUnmount } from 'vue';
 import { NCard, NSpin, NButton, NIcon, NModal } from 'naive-ui';
 import { travelPlanApi } from '../api/travelPlan';
 import { exportUtils } from '../utils/exportUtils';
+import axios from 'axios';
 
 const props = defineProps({
   planId: {
@@ -310,8 +311,10 @@ const emit = defineEmits(['back', 'complete']);
 
 const loading = ref(false);
 const error = ref(null);
-const summary = ref(null);
+const summary = ref('');
 const risks = ref([]);
+const isStreaming = ref(false);
+const eventSource = ref(null);
 const exportLoading = ref(false);
 const showExportDialog = ref(false);
 const showExportPopover = ref(false);
@@ -755,8 +758,9 @@ const validateLocations = () => {
 const generateSummary = async () => {
   loading.value = true;
   error.value = null;
-  summary.value = null;
+  summary.value = '';
   risks.value = [];
+  isStreaming.value = false;
 
   try {
     // 前端验证
@@ -786,24 +790,26 @@ const generateSummary = async () => {
         duration: getLocationDuration(loc),
         time_slot: getLocationTimeSlot(loc)
       })),
-      weather: buildWeatherPayload()
+      weather: buildWeatherPayload(),
+      stream: false
     };
 
+    // 使用 travelPlanApi 发送 POST 请求
     const response = await travelPlanApi.generateSummary(props.planId, requestData);
-    const data = response.data;
-
-    if (data.success) {
-      summary.value = data.summary;
-      risks.value = data.risks || [];
-    } else {
-      error.value = formatErrorMessage(data.error) || '生成总结失败';
+    
+    if (response.data && response.data.success) {
+      summary.value = response.data.summary || '';
+      risks.value = response.data.risks || [];
+    } else if (response.data && response.data.error) {
+      error.value = formatErrorMessage(response.data.error) || '生成总结失败';
     }
+
   } catch (err) {
     console.error('生成AI总结失败:', err);
-    const errorDetail = err.response?.data?.detail;
-    error.value = formatErrorMessage(errorDetail) || '网络请求失败，请重试';
+    error.value = formatErrorMessage(err.message) || '网络请求失败，请重试';
   } finally {
     loading.value = false;
+    isStreaming.value = false;
   }
 };
 

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Travel Planner - AI Summary Cloud Function",
   "dependencies": {
-    "axios": "^1.6.0"
+    "@cloudbase/node-sdk": "^3.16.0"
   },
   "scripts": {
     "start": "node index.js"

@@ -20,7 +20,13 @@
       "envVariables": {},
       "webFunctionConfig": {
         "path": "/api",
-        "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "method": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "OPTIONS"
+        ],
         "enableCORS": false,
         "isIntegrated": true
       }
@@ -35,7 +41,13 @@
       "envVariables": {},
       "webFunctionConfig": {
         "path": "/api/weather",
-        "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "method": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "OPTIONS"
+        ],
         "enableCORS": false,
         "isIntegrated": true
       }
@@ -50,10 +62,19 @@
       "envVariables": {},
       "webFunctionConfig": {
         "path": "/api/plans/summary",
-        "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "method": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE",
+          "OPTIONS"
+        ],
         "enableCORS": false,
         "isIntegrated": true
       }
     }
-  ]
+  ],
+  "ai": {
+    "defaultAgent": "{{env.AI_DEFAULT_AGENT}}"
+  }
 }
