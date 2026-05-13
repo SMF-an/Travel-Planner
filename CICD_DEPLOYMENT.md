@@ -102,7 +102,7 @@ git push origin main
 1. **密钥安全**：API 密钥通过 GitHub Secrets 管理，不要硬编码到代码中
 2. **构建环境**：使用 Ubuntu-latest 运行器，Node.js 版本为 20
 3. **依赖缓存**：使用 `actions/setup-node` 的缓存功能加速依赖安装
-4. **部署范围**：`cloudbase deploy --all` 会部署前端和所有云函数
+4. **部署范围**：`cloudbase deploy` 会根据 `cloudbaserc.json` 配置部署前端和所有云函数
 
 ## 故障排除
 

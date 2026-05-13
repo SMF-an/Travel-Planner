@@ -38,4 +38,4 @@ jobs:
           CLOUDBASE_SECRETKEY: ${{ secrets.CLOUDBASE_SECRETKEY }}
         run: |
           cloudbase login --apiKeyId $CLOUDBASE_SECRETID --apiKey $CLOUDBASE_SECRETKEY
-          cloudbase deploy --all
+          cloudbase deploy
