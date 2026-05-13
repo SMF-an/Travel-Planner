@@ -1,6 +1,5 @@
 {
   "envId": "personal-d8ge1nis6551fced9",
-  "id": "Travel-Planner",
   "functionRoot": "cloudfunctions",
   "app": {
     "root": "./frontend",

@@ -38,4 +38,4 @@ jobs:
           CLOUDBASE_SECRETKEY: ${{ secrets.CLOUDBASE_SECRETKEY }}
         run: |
           cloudbase login --apiKeyId $CLOUDBASE_SECRETID --apiKey $CLOUDBASE_SECRETKEY
-          cloudbase framework deploy -e personal-d8ge1nis6551fced9
+          cloudbase hosting deploy ./frontend/dist -e personal-d8ge1nis6551fced9
