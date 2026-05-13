@@ -123,7 +123,7 @@ npm install -g @cloudbase/cli
 cloudbase login --apiKeyId <SecretId> --apiKey <SecretKey>
 
 # 部署
-cloudbase deploy --all
+cloudbase framework deploy -e <envId>
 ```
 
 ---
